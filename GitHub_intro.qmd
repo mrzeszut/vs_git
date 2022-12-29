@@ -1,0 +1,234 @@
+---
+title: "Wprowadzenie do GitHub" 
+author: Mateusz Rzeszutek
+date: today 
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    toc-location: right
+    toc-title: Spis Treści
+    number-sections: true
+    number-depth: 3
+    embed-resources: true
+    html-math-method: katex
+    code-tools: true
+    code-block-bg: true
+    code-fold: show
+    code-summary: "Show and hide code"
+    link-external-icon: true
+    link-external-newwindow: true
+    smooth-scroll: true
+    self-contained: true
+    citation: true
+    bibliography: D:\\Qnap\\dydaktyka\\1_dzienne\\Kurs_R_SPD\\Temat_1_konf\\moja_bib.bib
+    theme: 
+        dark: solar
+        light: flatly
+    fontsize: 1.0em
+    linestretch: 1.3
+    fig-align: center
+execute: 
+  echo: true
+  error: false
+  warning: false
+  output: true
+--- 
+
+<style type="text/css"> body {text-align: justify}  </style>
+
+## Wprowadzenie
+
+**Dlaczego wszyscy tworzą na GitHubie? **
+
+Ponieważ zapewnia ważne funkcje **DevOps** potrzebne firmom i organizacjom każdej wielkości do ich projektów publicznych i prywatnych. Niezależnie od tego, czy chodzi o planowanie funkcji, naprawianie błędów czy współpracę przy zmianach, **GitHub** to miejsce, w którym zbierają się programiści z całego świata, aby coś tworzyć. A potem ulepszać to.
+
+W ramch kursu nauczysz się korzystać z kluczowych funkcji GitHub, w tym problemów, powiadomień, rozgałęzień, zatwierdzeń i żądań ściągnięcia. W ramch tego rpzewodnika nauczysz się:
+
+* Komunikacji ze społecznością projektu
+* Zarządzania powiadomieniami o wydarzeniach w projekcie
+* Tworzenia oddziałów (**branch**), aby równolegle zarządzać pracą
+* Wykonywania zatwierdzeń (**commit**), aby zaktualizować źródło projektu
+* Wprowadzać zmiany za pomocą żadania pobrania **pull request**
+* Tworzenia strony internetowej w GitHub Pages
+* Rozpoznawać różnice między **Git** i **GitHub** oraz role, jakie odgrywają w cyklu życia oprogramowania
+* Zrozumiesz czym jest rozwidlenie (**fork**) repozytorium i czym różni się od klona (**clone**)
+* Poznasz funkcjonalność etykiet repozytorium i gdzie można je zastosować w problemach i żądaniach ściągnięcia (**puul request**)
+
+Załóż konto [GitHub](https://github.com/)
+Dokumentacja [GitHub](https://docs.github.com/en)
+
+:::{.callout-tip appearance="simple"}
+W 2022 r przekroczono 50 milionów uzytkowników platformy GitHub
+:::
+
+### GitHuB przepływ [workFlow] 
+***
+
+Oprócz zapewniania platformy do wspólnego tworzenia oprogramowania, GitHub oferuje również przepływ pracy (**workflow**) zaprojektowany w celu optymalizacji wykorzystania różnych funkcji.
+
+Przepływ usługi GitHub to lekki przepływ pracy oparty na gałęziach (**fork**). Przepływ GitHub jest przydatny dla wszystkich, nie tylko dla programistów. Na przykład w GitHub używany jest przepływ GitHub do konrolowania np: [zasad witryny](https://github.com/github/site-policy), [dokumentacji](https://github.com/github/site-policy) i [planu działania](https://github.com/github/roadmap).
+
+Wstępne wymagania: 
+
+Aby śledzić [**flow**] w GitHub, potrzebujesz konta GitHub i repozytorium. 
+
+* W tym celuu twórz konto: [Rejestracja w serwisie GitHub](https://docs.github.com/en/get-started/signing-up-for-github). 
+* Następnie utwórz repozytorium: [Tworzenie repozytorium](https://docs.github.com/en/get-started/quickstart/create-a-repo) 
+* Informacje jak znaleźć repozytorium w którm można wspóltworzyć zobacz na [Znajdowanie sposobów współtworzenia oprogramowania typu open source w usłudze GitHub](https://docs.github.com/en/get-started/exploring-projects-on-github/finding-ways-to-contribute-to-open-source-on-github).
+
+::: {.callout-note}
+
+Możesz tworzyć publiczne repozytoria dla projektu open source. Podczas tworzenia publicznego repozytorium pamiętaj o dołączeniu [pliku licencji](https://choosealicense.com/), który określa sposób udostępniania projektu innym osobom. 
+Aby uzyskać więcej informacji na temat oprogramowania typu open source, a w szczególności sposobu tworzenia i rozwijania projektu typu open source, stworzyliśmy [przewodniki](https://opensource.guide/) typu open source, które pomogą Ci w budowaniu zdrowej społeczności oprogramowania typu open source, zalecając najlepsze praktyki tworzenia i utrzymywania repozytoriów dla projektu typu open source.
+
+Możesz także wziąć udział w bezpłatnym kursie [GitHub Skills](https://skills.github.com/) dotyczącym utrzymywania społeczności open source.
+
+Możesz także dodawać pliki kondycji społeczności do swoich repozytoriów, aby ustalać wytyczne dotyczące sposobu wnoszenia wkładu, zapewniania bezpieczeństwa repozytoriów i wiele więcej. Aby uzyskać więcej informacji, zobacz [Tworzenie domyślnego pliku kondycji społeczności](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/creating-a-default-community-health-file).
+
+:::
+
+### Git a GitHub [Różnice]
+***
+
+Pracując z Git i GitHub, możesz zastanawiać się nad różnicą między nimi.
+
+**Git** to rozproszony system kontroli wersji (DVCS), który umożliwia wielu programistom lub innym współpracownikom pracę nad projektem. Zapewnia sposób pracy z jednym lub kilkoma lokalnymi oddziałami i wypychania ich do zdalnego repozytorium. Git jest odpowiedzialny za wszystko, co związane z GitHubem, co dzieje się lokalnie na Twoim komputerze. Kluczowe funkcje zapewniane przez Git obejmują:
+
+* Jest zainstalowany i używany na komputerze lokalnym
+* Obsługuje kontrolę wersji
+* Obsługuje rozgałęzienia
+
+Aby dowiedzieć się więcej o Git, zobacz [Używanie typowych poleceń Git](https://docs.github.com/en/get-started/using-git).
+
+**GitHub** to platforma chmurowa, która wykorzystuje Git jako podstawową technologię. Upraszcza proces współpracy nad projektami i zapewnia witrynę internetową, narzędzia wiersza poleceń oraz ogólny przepływ, który umożliwia programistom i użytkownikom współpracę. GitHub działa jako „zdalne repozytorium” wspomniane wcześniej w sekcji Git .
+
+Kluczowe funkcje oferowane przez GitHub obejmują:
+
+* Problemy
+* Dyskusje
+* Żądania ściągnięcia
+* Powiadomienia
+* Etykiety
+* działania
+* widelce
+* Projektowanie
+
+Aby dowiedzieć się więcej o usłudze GitHub, zobacz [dokumentacje](https://docs.github.com/en/get-started)
+
+### Problemy [Issue]
+***
+
+Problemy występują tam, gdzie odbywa się większość komunikacji między konsumentami projektu a zespołem deweloperskim. Problem można utworzyć, aby omówić szeroki zestaw tematów, w tym raporty o błędach, prośby o nowe funkcje, wyjaśnienia dotyczące dokumentacji i nie tylko. Po utworzeniu problemu można go przypisać do właścicieli, etykiet, projektów i kamieni milowych. Możesz także powiązać problemy z żądaniami ściągnięcia i innymi elementami usługi GitHub, aby zapewnić możliwość śledzenia w przyszłości.
+
+Aby dowiedzieć się więcej o problemach z GitHub, zobacz [Mastering Issues](https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-an-issue)
+
+### Powiadomienia [notifications]
+***
+
+Jako platforma współpracy, GitHub oferuje powiadomienia o praktycznie każdym wydarzeniu, które ma miejsce w ramach danego przepływu pracy. Powiadomienia te można precyzyjnie dostosować do własnych preferencji. Na przykład, możesz subskrybować wszystkie tworzenie i edycje numerów w projekcie lub możesz po prostu otrzymywać powiadomienia o numerach, w których wspomniano o Tobie. Możesz także zdecydować, czy chcesz otrzymywać powiadomienia za pośrednictwem poczty e-mail, Internetu i telefonu komórkowego, czy obu. Aby śledzić wszystkie swoje powiadomienia w różnych projektach, skorzystaj z pulpitu nawigacyjnego powiadomień GitHub.
+
+Aby dowiedzieć się więcej o powiadomieniach GitHub, zobacz [Konfigurowanie powiadomień - Configuring notifications](https://docs.github.com/en/account-and-profile/managing-subscriptions-and-notifications-on-github/setting-up-notifications/configuring-notifications)
+
+### Gałęzie [Branches]
+***
+Gałęzie są preferowanym sposobem tworzenia zmian w przepływie usługi GitHub . Zapewniają izolację, dzięki czemu wiele osób może jednocześnie pracować nad tym samym kodem w kontrolowany sposób. Ten model zapewnia stabilność między krytycznymi gałęziami, takimi jak main, zapewniając jednocześnie pełną swobodę programistom w zakresie wprowadzania wszelkich zmian potrzebnych do osiągnięcia ich celów. Gdy kod z gałęzi jest gotowy, aby stać się częścią maingałęzi, można go scalić za pomocą żądania ściągnięcia.
+
+Aby dowiedzieć się więcej o gałęziach GitHub, zobacz [Informacje o gałęziach](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-branches).
+
+### Zatwierdzenia [Commits]
+***
+Zatwierdzenie [**commit**] to zmiana w jednym lub kilku plikach w gałęzi [**branch**]. Za każdym razem, gdy tworzone jest zatwierdzenie, przypisywany jest mu **unikalny identyfikator** i jest on śledzony wraz z czasem i współtwórcą. Zapewnia to przejrzystą **ścieżkę audytu** dla każdego, kto przegląda historię pliku lub połączonego elementu, takiego jak problem lub żądanie ściągnięcia.
+
+Aby dowiedzieć się więcej o zatwierdzeniach GitHub, zobacz [Zatwierdzanie i przeglądanie zmian w projekcie](https://docs.github.com/en/desktop/contributing-and-collaborating-using-github-desktop/making-changes-in-a-branch/committing-and-reviewing-changes-to-your-project)
+
+```{mermaid}
+%% | echo: false
+%% | fig-align: 'center'
+%% | fig-cap: Rys. 3 System zatwierdzania wysyłanych aktualizacji kodu źródłowego.
+%%{init: {'theme': 'dark' } }%%
+
+    gitGraph
+       commit id: "Alpha"
+       commit id: "Beta"
+       commit id: "Gamma"
+       branch develope
+       commit id: "firts"
+       commit id: "second"
+       commit id: "next ..."
+       commit id: "last"
+       checkout main
+       commit id: "delta"
+       commit id: "kappa"
+       merge develope
+       commit id: "next"
+
+```
+
+### Żądanie pobrania [Pull Requests]
+***
+Żądanie ściągnięcia to mechanizm używany do sygnalizowania, że zatwierdzenia z jednej gałęzi są gotowe do połączenia z inną gałęzią. Deweloper przesyłający żądanie ściągnięcia często prosi jednego lub więcej recenzentów o zweryfikowanie kodu i zatwierdzenie scalenia. Ci recenzenci mają możliwość komentowania zmian, dodawania własnych lub korzystania z samego żądania ściągnięcia do dalszej dyskusji. Po zatwierdzeniu zmian (jeśli wymagane jest zatwierdzenie), gałąź źródłowa żądania ściągnięcia (gałąź porównawcza) może zostać włączona do gałęzi podstawowej.
+
+Aby dowiedzieć się więcej o żądaniach ściągnięcia GitHub, zobacz Informacje o [pull requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests).
+
+### Etykiety [Labels]
+***
+
+Etykiety umożliwiają kategoryzowanie i organizowanie problemów oraz pobieranie żądań w repozytorium. Podczas tworzenia repozytorium GitHub kilka etykiet zostanie dla Ciebie automatycznie dodanych, a także można utworzyć nowe. Przykłady etykiet obejmują:
+
+* błąd [*bug*]
+* dokumentacja [*documentation*]
+* duplikować [*duplicate*]
+* potrzebna pomoc [*help wanted*]
+* rozwój [*enhancement*]
+* pytanie [*question*]
+
+### Automatyzacja [Actions]
+***
+
+ **Action** w GitHub zapewnia automatyzację zadań i funkcjonalność przepływu pracy w repozytorium. **Actiion** mogą służyć do usprawniania procesów w cyklu życia oprogramowania oraz wdrażania ciągłej integracji i ciągłego wdrażania (CI/CD). Akcje GitHub składają się z następujących komponentów:
+
+* Przepływy pracy [*Workflow*]: Zautomatyzowane procesy dodane do Twojego repozytorium.
+* Zdarzenia [*Events*]: działanie, które uruchamia przepływ pracy.
+* Zadania [*Jobs*]: Zestaw kroków, które wykonuje biegacz.
+* Kroki [*Steps*]: Zadanie, które może uruchomić jedno lub więcej poleceń (działań).
+* [*Actions*]: samodzielne polecenia, które można łączyć w kroki. Aby utworzyć zadanie, można połączyć wiele kroków.
+* [*Runners]*: serwer z zainstalowaną aplikacją runner GitHub Actions.
+
+
+Patrz [Introduction to GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions)
+
+
+### Klonowanie i rozwidlenia [Cloning and forking]
+***
+
+GitHub zapewnia wiele sposobów kopiowania repozytorium, abyś mógł nad nim pracować.
+
+Klonowanie repozytorium — klonowanie repozytorium spowoduje utworzenie kopii repozytorium i jego historii na komputerze lokalnym. Jeśli masz uprawnienia do zapisu w repozytorium, możesz przesyłać zmiany z komputera lokalnego do zdalnego repozytorium (nazywanego Origin ) po ich zakończeniu. 
+
+Aby sklonować repozytorium w VS Code: Naciśnij **Ctrl + +Shift + P** wpisz **Clone** i podaje adres **URL** repozytorium. Możesz także skorzystac z [GitHub Desctop](https://desktop.github.com/)
+
+**Rozwidlenie repozytorium** — rozwidlenie [*fork*] repozytorium tworzy kopię repozytorium na Twoim koncie GitHub. Repozytorium nadrzędne jest określane jako upstream, podczas gdy rozwidlona kopia jest określana jako źródło. Po rozwidleniu repozytorium na koncie GitHub możesz sklonować je na maszynę lokalną. Rozwidlenie umożliwia swobodne wprowadzanie zmian w projekcie bez wpływu na oryginalne repozytorium nadrzędne. Aby wprowadzić zmiany z powrotem do repozytorium nadrzędnego, tworzysz żądanie ściągnięcia z rozwidlonego repozytorium. Możesz także uruchamiać gitpolecenia, aby upewnić się, że kopia lokalna pozostaje zsynchronizowana z repozytorium nadrzędnym.
+
+Kiedy sklonowałbyś repozytorium, a kiedy rozwidlałeś repozytorium? Jeśli pracujesz z repozytorium i masz uprawnienia do zapisu, możesz sklonować je na swój komputer lokalny. Stamtąd możesz wprowadzać modyfikacje i przesyłać zmiany bezpośrednio do repozytorium pochodzenia .
+
+Jeśli musisz pracować z repozytorium utworzonym przez innego właściciela, takiego jak github/examplei nie masz dostępu do zapisu, możesz utworzyć rozwidlenie repozytorium na swoim koncie GitHub, a następnie sklonować rozwidlenie na komputerze lokalnym. Aby zobaczyć to wizualnie, załóżmy, że Twoje konto GitHub nazywa się githubtraining. Korzystając z witryny GitHub, możesz rozwidlić github/examplelub dowolne inne repozytorium na swoim koncie. Stamtąd możesz sklonować rozwidloną wersję repozytorium na swój komputer lokalny. Te kroki są pokazane na poniższym obrazku.
+
+Zmiany można wprowadzać w lokalnej kopii programu githubtraining/example, a następnie przesyłać je z powrotem do zdalnego repozytorium źródłowego ( githubtraining/example). Zmiany można następnie przesłać do repozytorium github/example nadrzędnego za pomocą żądania ściągnięcia, jak pokazano poniżej.
+
+Aby dowiedzieć się więcej, zobacz [rozwidlenie repozytorium](https://docs.github.com/en/get-started/quickstart/fork-a-repo).
+
+### Strona Internetowa [GitHub Pages]
+***
+
+GitHub Pages to mechanizm hostingowy wbudowany bezpośrednio w Twoje konto GitHub. Przestrzegając kilku konwencji i włączając tę funkcję, możesz zbudować własną statyczną witrynę wygenerowaną z kodu HTML i kodu przeceny pobranego bezpośrednio z Twojego repozytorium. Aby dowiedzieć się więcej, zobacz [strony GitHub](https://pages.github.com/).
+
+## Cwiczenie z przewodnikiem GitHub
+
+Po kliknięciu przycisku **Rozpocznij ćwiczenie w serwisie GitHub**  zostaniesz przekierowany do publicznego repozytorium szablonów GitHub, które wyświetli monit o wykonanie serii małych wyzwań. Zanim rozpoczniesz ćwiczenie, wykonaj poniższe zadania:
+
+Wybierz przycisk Rozpocznij kurs lub opcję Użyj tego szablonu w repozytorium szablonów. Spowoduje to wyświetlenie monitu o utworzenie nowego repozytorium. Zalecamy utworzenie repozytorium publicznego, ponieważ prywatne repozytoria będą wykorzystywać minuty Actions. Po utworzeniu własnego repozytorium z szablonu odczekaj około 20 sekund i odśwież.
+
+Postępuj zgodnie z instrukcjami zawartymi w pliku README repozytorium, aby zrozumieć, jak działa ćwiczenie, jakie są jego cele edukacyjne i jak pomyślnie ukończyć ćwiczenie.
+
+[Rozpocznij ćwiczenie w serwisie GitHub](https://github.com/skills/introduction-to-github)

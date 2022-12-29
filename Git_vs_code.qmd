@@ -1,0 +1,414 @@
+---
+title: "Git w Visual Studio Code"
+author: Mateusz Rzeszutek
+date: today 
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    toc-location: right
+    toc-title: Spis Treści
+    number-sections: true
+    number-depth: 3
+    embed-resources: true
+    html-math-method: katex
+    code-tools: true
+    code-block-bg: true
+    code-fold: show
+    code-summary: "Show and hide code"
+    link-external-icon: true
+    link-external-newwindow: true
+    smooth-scroll: true
+    self-contained: true
+    citation: true
+    bibliography: D:\\Qnap\\dydaktyka\\1_dzienne\\Kurs_R_SPD\\Temat_1_konf\\moja_bib.bib
+    theme: 
+        dark: solar
+        light: flatly
+    fontsize: 1.0em
+    linestretch: 1.3
+    fig-align: center
+execute: 
+  echo: true
+  error: false
+  warning: false
+  output: true
+--- 
+
+<style type="text/css"> body {text-align: justify}  </style>
+
+***
+
+## Wprowadzenie 
+
+[Git](https://git-scm.com/) to darmowy i rozproszony **system kontroli wersji** typu open source , zaprojektowany do obsługi wszystkiego, od małych do bardzo dużych projektów, szybko i wydajnie. **Git** jest łatwy do nauczenia i zajmuje niewiele miejsca przy błyskawicznej wydajności.
+
+Wyobraź sobie, że chcesz przyczynić się do projektu typu open source, który jest hostowany w serwisie **GitHub**. Zwykle musisz:
+
+* uzyskać lokalną kopię kodu, 
+* utworzyć gałąź dla swoich zmian, 
+* edytować pliki kodu źródłowego, 
+* przekazać zmiany do rozwidlonego repozytorium hostowanego online, 
+* a następnie utworzyć żądanie ściągnięcia do menedżera projektu open source.
+
+Można wykonywać te typowe zadania bezpośrednio z poziomu konsoli Git. Z reguły trwa to dosć długo. Można również skrozystać z programu **Visual Studio Code** z mniejszą ilością pisania i zwiększą przejrzystością. Omówimy jak to zrobić. 
+
+**Sprawdź, czy jesteś gotowy**
+
+* Git, zainstalowany?
+* Visual Studio Code, Zainstalowany?
+* Podstawowa znajomość koncepcji i poleceń Git, takich jak praca z repozytoriami, rozwidleniami, klonami i gałęziami, wprowadzanie i usuwanie zmian oraz wypychanie zatwierdzeń?
+* Konto GitHub, posiadasz?
+
+## Klonowanie repozytorium 
+
+### Wprowadzenie 
+***
+
+Jeśli sklonujesz czyjeś repozytorium GitHub i wprowadzisz zmiany, okaże się, że nie masz uprawnień do wypchnięcia tych zmian z powrotem do GitHub. Przepływ pracy dotyczący wnoszenia wkładów w projekty innych osób w usłudze GitHub jest nieco bardziej złożony niż praca bezpośrednio w repozytorium projektu. Wymaga utworzenia rozwidlenia [*z ang. fork*].
+
+**Fork** to kopia całego repozytorium GitHub ze źródła w określonym momencie. Możesz rozwidlić dowolne dostępne repozytorium na własne konto GitHub. To repozytorium nie będzie automatycznie aktualizowane w stosunku do oryginalnego repozytorium, ale zapewni pełny dostęp do rozwidlonego repozytorium. Ten krok jest wymagany do tworzenia żądania pobrania repozytorium, do którego nie masz dostępu.
+
+```{mermaid}
+%% | echo: false
+%% | fig-aling: center
+%% | fig-cap: Rys. 1. Kopia istniejącego repozytorium na platformie GitHub (creat fork).
+%%{init: {'theme': 'dark' }}%%
+
+flowchart  
+  A([repo-main])
+  B([repo-user])
+  
+  subgraph S3 [GitHub]
+  A==>|copy-repo|B
+  end
+
+  classDef sub font-weight:bold
+  class S3 sub
+```
+
+::: {.callout-important appearance="simple"}
+**Fork** istnieje tylko w GitHub. Nie znajdziesz go w Git. 
+:::
+
+**Clone** - Sklonowane repozytorium to cała kopia zdalnego repozytorium (w tym repozytoria rozwidlone). Możesz sklonować repozytorium na swój komputer i mieć dostęp do całej historii zatwierdzeń od czasu utworzenia repozytorium. To repozytorium może należeć do dowolnej osoby, o ile jest ona publiczna. Z tej lokalnej kopii będziesz mógł tworzyć zatwierdzenia, gałęzie i synchronizować te zmiany z powrotem do zdalnego repozytorium (jeśli masz dostęp).
+
+```{mermaid}
+%% | echo: false
+%% | fig-align: 'center'
+%% | fig-cap: Rys. 2. Kopia repozytorium na lokalny komputer (creat clone).
+%%{init: {'theme': 'dark' } }%%
+
+flowchart LR
+  
+  subgraph S1 [Github]
+  A([repo main])
+  B([repo user])
+  A==>|copy repo|B
+  end
+
+  subgraph S2 [User-Computer]
+  C([local project])
+  B-->|clone repo|C
+  end
+
+  classDef sub font-weight:bold
+  class S1 sub
+  class S2 sub
+```
+
+**Branch** - Gałąź, podobnie jak gałąź domyślna, jest po prostu wskaźnikiem do określonego zatwierdzenia. Zatwierdzenie może mieć rodzica i być rodzicem wielu zatwierdzeń. Zatwierdzenie jest często reprezentowane przez pierwsze pięć znaków skrótu.
+
+```{mermaid}
+%% | echo: false
+%% | fig-align: 'center'
+%% | fig-cap: Rys. 3 System zatwierdzania wysyłanych aktualizacji kodu źródłowego.
+%%{init: {'theme': 'dark' } }%%
+
+flowchart  
+  A([main])
+  B[[confirm]]
+  D[[confirm]]
+  C[[expects]]
+  G[[expects]]
+  E([update-user])
+  
+  subgraph GG [Branch]
+  E -->|push|G
+  G --> C
+  C -->|check|A
+  C --> D
+  D --> B
+  end
+
+  classDef sub font-weight:bold
+  class GG sub
+```
+
+Utworzenie nowej gałęzi i zatwierdzenie nowego kodu powoduje utworzenie nowego zatwierdzenia na końcu łańcucha i przesunięcie wskaźnika gałęzi dalej.
+
+::: {.callout-important appearance="simple"}
+Chociaż te kroki można wykonać z poziomu wiersza poleceń lub edytora, w następnym ćwiczeniu odtworzymy tę strukturę przy pomocy ścisłej integracji Visual Studio Code z Git.
+:::
+
+### Zanim zaczniesz wykonywać instrukcje
+***
+
+::: {.callout-important appearance="simple"}
+Aby kontynuować to ćwiczenie, musisz zainstalować lokalnie Git i Visual Studio Code. Będziesz także potrzebować konta GitHub. Na koniec w tym ćwiczeniu zakładamy, że wiesz już, jak używać Gita. Celem ćwiczenia jest zademonstrowanie integracji Git z Visual Studio Code.
+:::
+
+Jeśli sklonujesz czyjeś repozytorium GitHub i wprowadzisz zmiany, okaże się, że nie masz uprawnień do wypchnięcia tych zmian z powrotem do GitHub. 
+
+**Przepływ pracy wnoszenia wkładów w projekty innych osób w usłudze GitHub jest nieco bardziej złożony niż praca bezpośrednio w repozytorium projektu.**
+
+Wszystko zaczyna się od stworzenia fork (gałęzi). **Fork** to kopia repozytorium GitHub, która jest powiązana z Twoim kontem GitHub. Kiedy tworzysz rozwidlenie, otrzymujesz pełne uprawnienia do wypychania do niego zmian, nawet jeśli nie masz tych uprawnień w oryginalnym repozytorium.
+
+Utworzenie rozwidlenia repozytorium, do którego chcesz się przyczynić, jest ważnym **pierwszym krokiem**. Rozwidlanie odbywa się w całości w GitHub, więc używasz do tego interfejsu internetowego GitHub, a nie narzędzia na twoim komputerze programistycznym.
+
+
+### Kopiowanie i kolonowanie repozytorium
+***
+
+* Przejdź do testowego [repozytorium]([mslearn-use-git-from-vs-code](https://github.com/MicrosoftDocs/mslearn-use-git-from-vs-code)) utworzonego przez **MicrosoftDocs**. Ten projekt zawiera kod, który można forkować, klonować i modyfikować.
+
+* Następnie wybierz **fork** (widelec) w prawym górnym rogu strony internetowej **musisz być zalogowany w GitHub**. Następnie zatwierdźć utoworzenie fork na twoim koncie.
+
+![](fig/fork.png){fig-align="center" width="600"}
+
+* Skopiuj adres URL (w tym celu kliknij **CODE**)
+
+![](fig/code.png){fig-align="center" width="300"}
+
+* Naciśnij `Ctrl+Shift+P` w **VS Code** - otworzy paletę poleceń. W polu wyszukiwania wpisz **clone** wybierz **Git: Clone** i Naciśnij Enter.
+
+* Wprowadź skopiowany adres URL repozytorium. Naciśnij Enter.
+
+* Wybierz folder na lokalnym dysku twardym, w którym chcesz przechowywać pliki sklonowanego repozytorium. W prawym dolnym rogu pojawi się okno z pytaniem, czy chcesz otworzyć zamknięte repozytorium. Wybierz Otwórz.
+
+* Wszystkie pliki kodu repozytorium są wyświetlane w widoku Eksplorator kodu programu Visual Studio.
+
+::: {.callout-important appearance="simple"}
+Paleta poleceń zapewnia dostęp do wielu funkcji Git. Jeśli jesteś ciekawy, co możesz zrobić z palety poleceń, otwórz ją i  wpisz git.
+:::
+
+### Utówrz gałąź (branch) lokalnego projektu
+***
+
+**Pasek stanu** pojawia się u dołu okna programu Visual Studio Code i zapewnia szereg funkcji w zależności od załadowanych rozszerzeń i tego, nad czym pracujesz. Pasek stanu zawiera przydatne informacje i funkcje Git. Wyświetla dwie części:
+
+Po lewej stronie znajduje się nazwa aktualnie działającego **branch** (gałęzi). Jeśli zmodyfikujesz śledzone pliki w gałęzi roboczej, pasek stanu doda symbol gwiazdki **(*)** obok nazwy gałęzi. Podczas etapowania zmian gwiazdka zmiena się na plus **(+)**. Po zatwierdzeniu zmian etapowych znak plus znika i pojawia się tylko nazwa gałęzi.
+
+![](fig/panel_git_1.png){fig-align="center"}
+
+Po prawej stronie znajduje się ikona **okręg ze strzałkami** - *Synchronizuj zmiany*, która zmienia się na **chmurkę ze strzałką skierowaną w górę** - *Publikuj zmiany*.
+
+Ikona Synchronizuj zmiany jest wyświetlana obok nazwy bieżącej gałęzi. Naciśnięcie tej ikony spowoduje **zsynchronizowanie lokalnych i zdalnych zatwierdzeń między komputerem a repozytorium GitHub**.
+
+![](fig/panel_git_2.png){fig-align="center"}
+
+**Ikona Publikuj** zmiany jest wyświetlana obok nazwy bieżącej gałęzi. Naciśnięcie tej ikony spowoduje **przekazanie lokalnego zatwierdzenia do repozytorium GitHub**.
+
+![](fig/panel_git_3.png){fig-align="center"}
+
+* Aby utworzyć gałąź, **kliknij nazwę gałęzi** na pasku stanu: **master**. Ta czynność otwiera paletę poleceń i umożliwia przełączenie się do istniejącej gałęzi lub utworzenie nowej gałęzi.
+
+* Utórz nową gałąź i wprowadzać nazwę nowego oddziału, **update-response**. Zwróć uwagę, że podczas wprowadzania znaków istniejące nazwy gałęzi znikają. Zatwwierź zmianę.
+
+* Pasek stanu powinien teraz wyświetlać **update-response** , wskazując gałąź, nad którą teraz pracujesz.
+
+### Edytujemy kod źródłowy
+***
+
+W widoku eksploratora rozwiń **node/routesfolder** i wybierz **index.jsplik**, aby był wyświetlany w obszarze edytora kodu programu Visual Studio Code.
+
+Zaktualizuj przykładowy kod, aby był zgodny z następującym kodem **bez zapisywania zmian**:
+
+````
+`const express = require('express');
+const router = express.Router();
+
+/* GET home page. */
+router.get('/', function(req, res, next) {
+  res.render('index', { title: 'Hello Git!' });
+});
+
+module.exports = router;`
+````
+
+### Obserwuj pasek stanu
+***
+Jeśli plik **index.js** nie został zapisany w poprzednim kroku, zauważysz kilka wskazówek wizualnych. Na ikonie widoku Eksploratora w lewej kolumnie pojawia się małe niebieskie kółko z numerem. Liczba wskazuje, ile plików ma niezapisane zmiany.
+
+![](fig/panel_vs_1.png){fig-align="left"}
+
+Gdy zapiszesz zmiany w pliku za pomocą **Ctrl+S**, niebieskie kółko zniknie, a na ikonie kontroli źródła pojawi się nowa niebieska ikona z liczbą, wskazującą liczbę oczekujących zmian (nieetapowych lub etapowych), które są gotowe do zatwierdzenia. Liczba zwiększa się, gdy wprowadzasz więcej zmian w większej liczbie plików.
+
+**Numer ten odpowiada pojawieniu się symbolu gwiazdki (*) na pasku stanu obok nazwy oddziału.**
+
+Wreszcie, po zatwierdzeniu zmian, ta ikona znika. Zatwierdzisz zmiany w następnym ćwiczeniu.
+
+### Podsumowanie
+****
+
+* Aby sklonować repozytorium, otwórz paletę poleceń, naciskając **Ctrl+Shift+P** i wpisując **clone**.
+* Aby zobaczyć, z którym oddziałem pracujesz, spójrz na **pasek stanu**.
+* Aby przełączyć się do nowego oddziału lub utworzyć nowy oddział, wybierz nazwę bieżącego oddziału na pasku stanu.
+* Aby uruchomić polecenia **git pull** i **git push** w istniejącej gałęzi, wybierz opcję Synchronizuj zmiany .
+* Aby uruchomić **git push** polecenie w nowej gałęzi, wybierz Publikuj zmiany .
+Aby wyświetlić liczbę nieetapowych lub etapowych zmian, spójrz na niebieskie kółko z numerami nad ikoną kontroli źródła w lewej kolumnie.
+
+## Przygotowuj, zatwierdzaj i przesyłaj zmiany do zdalnego repozytorium
+
+### Wprowadzenie
+***
+
+Modyfikowanie plików lokalnie w repozytorium nic nie daje, dopóki nie można ich zsynchronizować z głównym repozytorium GitHub. W tej części przejdziesz przez różne etapy, przez które przechodzi plik, od modyfikacji do przesłania do GitHub. 
+
+|**Keywords**|**Słowa kluczowe**|       
+|:-----------|:-----------------|
+|**stage**   | przygotuj        |
+|**comimt**  | zatwierdzaj      | 
+|**push**    | wysyłaj          |
+
+**Lakalne vs zdalne repozytorium:**
+
+Każde sklonowane repozytorium na dysk lokalny jest identyczną kopią repozytorium GitHub. Zatwierdzenia dokonane lokalnie nie zostaną automatycznie znalezione w serwisie GitHub. W celu przesłania `commit` na GitHub, musimy uruchomić operację `push`, która przeniesie niezsynchronizowane `commit` z naszego lokalnego repozytorium do zdalnego repozytorium `GitHub`.
+
+**Unstage:** Zmiana `unstage` to plik, który został zmodyfikowany, ale nie został dodany do obszaru `stage`. Obszar pomostowy jest wypełniony plikami, które znajdą się w następnym `commit`. Jeśli utworzysz `commit` z plikami `unstage`, nie będą one częścią tego zatwierdzenia w twoim lokalnym repozytorium.
+
+**Stage:** Zmiana etapowa polega na dodaniu pliku do obszaru tymczasowego (**Staging area**). Są częścią listy plików, które mają zostać dodane do następnego utworzonego `commit`. Zmiany etapowe obejmują: 
+
+* nowe pliki, 
+* usunięte pliki, 
+* zmodyfikowane pliki.
+
+**Commit:** Zatwierdzenie to połączenie **komunikatów dziennika** i **zawartości plików**, które zostały wcześniej przygotowane. To nowe zatwierdzenie ma przypisany skrót i będzie reprezentować nowe modyfikacje twoich plików. Obszar przemieszczania jest następnie czyszczony, ponieważ zmiany są teraz **utrwalane w lokalnym repozytorium**.
+
+```{mermaid}
+%% | echo: false
+%% | fig-aling: center
+%% | fig-hight: 4 
+%% | fig-cap: Rys. 4. Unstage -> Stage -> Commit.
+%%{init: {'theme': 'dark' }}%%
+flowchart  
+  subgraph SX [Local Repository]
+    
+    subgraph S1 [Working Directory]
+    A([Modyfying files])
+    end
+    A --> B
+    
+    subgraph S2 [Staging Area]
+    B([Staging files])
+    end
+    B --> C
+    
+    subgraph S3 [Repository]
+    C([Comitings files])
+    end     
+  end
+  
+  classDef sub font-weight:bold
+ 
+  class SX sub
+  class S1 sub
+  class S2 sub
+  class S3 sub
+```
+
+**push:** Polecenie `push` aktualizuje twoje zdalne repozytorium o zmiany lokalne. To polecenie jest ostatnim krokiem, aby upewnić się, że lokalne zmiany staną się trwałe w **GitHub**. Po wykonaniu `push` polecenia wszyscy współtwórcy Twojego projektu **GitHub** będą mieli dostęp do nowego zaktualizowanego repozytorium.
+
+
+```{mermaid}
+%% | echo: false
+%% | fig-aling: center
+%% | fig-cap: Rys. 5. push.
+%%{init: {'theme': 'dark' }}%%
+
+flowchart  
+  subgraph S0 [Different Environments]
+    
+    subgraph S1 [Local]
+    A([Repository])
+    end
+
+    subgraph S2 [GitHub]
+    B([Repository])
+    end
+    
+    S1 ==>|push|S2
+  
+  end
+  
+  classDef sub font-weight:bold
+  class S0 sub
+  class S1 sub
+  class S2 sub
+```
+
+Następnie będziesz kontynuować to, co zaczęliśmy w poprzedniej części. Visual Studio Code pomoże nam etapować nasze zmiany, zatwierdzić je w naszym lokalnym repozytorium, a na końcu zsynchronizować nasze repozytorium z GitHub.
+
+### Instrukcja [stage -> commit -> push]
+***
+
+#### Krok 1 - widok kotroli źródła
+
+Otwórz widok kontroli źródła w lewym panelu. Widok kontroli źródła pokazuje zarówno zmiany etapowe, jak i nieetapowe. Twoim celem jest utworzenie zatwierdzenia, które możesz również wykonać z tego widoku. Ale najpierw musisz zdecydować, które zmiany powinny zostać dodane do twojego zatwierdzenia.
+
+![](fig/vs_change_panel.png)
+
+Możesz zobaczyć, że Twój plik index.js znajduje się na liście Zmiany . Po prawej stronie nazwy pliku znajdują się cztery ikony:
+
+* Ikona **pliku**: Wybierz, aby otworzyć i wyświetlić plik w głównym panelu edytora.
+* Ikona **strzałki** : Wybierz, aby odrzucić zmiany i przywrócić plik do stanu z poprzedniego zatwierdzenia.
+* Ikona **(+)** : Wybierz, aby zatwierdzić zmiany.
+* Ikona **M**: wskazuje, że ten plik istniał wcześniej i został zmodyfikowany.
+
+#### Krok 2 - przygotuj zmieniony plik
+
+Wybierz znak plus **(+)**, aby przenieść plik do nowej sekcji zatytułowanej Zmiany etapowe.
+
+#### Krok 3 - usuń zmieniony plik
+
+Aby anulować etap przygotowania zmienionego pliku, w obszarze Zmiany etapowe wybierz znak minus **(-)** obok pliku `index.js`. Ta czynność powoduje przeniesienie pliku z powrotem do sekcji zmian nieetapowych. Ta czynność może okazać się przydatna, jeśli przez pomyłkę umieścisz zmianę, która była przeznaczona dla innego zatwierdzenia.
+
+Aby ponownie wprowadzić zmianę, powtórz krok 2.
+
+#### Krok 4 - Utówrz zatwierdzenie commit 
+
+Panel kontroli źródła wyświetla kilka ikon w prawym górnym rogu. Aby rozpocząć zatwierdzanie zmian, wybierz ikonę znacznika wyboru.
+
+Chcesz dodać komunikat zatwierdzenia do swojego zatwierdzenia. W polu tekstowym nad przyciskiem Zatwierdź wpisz zaktualizowany obiekt odpowiedzi.
+
+Aby zakończyć zatwierdzanie, wybierz Enterlub wybierz przycisk Zatwierdź .
+
+:::{.callout-note appearance="simple"}
+Otrzymasz ostrzeżenie, jeśli wiersz tematu zawiera więcej niż 50 znaków, czyli powszechnie akceptowany limit.
+:::
+
+#### Krok 5 - Wprowadźć zmiany w repozytorium
+
+W poprzedniej części mówiliśmy o ikonie Synchronizuj zmiany (dwie strzałki skierowane w prawo) na pasku stanu. Jak pokazano na poniższym obrazku, po prawej stronie ikony znajduje się strzałka w dół z zerem (0) obok niej, wskazująca, że ​​nie ma zatwierdzeń do ściągnięcia. Obok znajduje się strzałka w górę z jedynką (1) obok niej, wskazująca, że ​​jest jedno zatwierdzenie do wypchnięcia do repozytorium.
+
+![](fig/panel_git_4.png)
+
+Wybierz teraz ikonę `Synchronizuj zmiany`, aby wykonać a, `git pull` następnie a `git push`. Nie powinno być nic nowego do ściągnięcia, ale akcja powinna wypchnąć twoje ostatnie zatwierdzenie do twojej gałęzi w twoim rozwidlonym repozytorium.
+
+#### Krok 6 - Wejdźć do GitHub
+
+Po powrocie do GitHub przejdź do rozwidlenia repozytorium utworzonego w poprzedniej części.
+
+Wybierz rozwijaną strzałkę **Branch: master**, aby wyświetlić listę wszystkich gałęzi w twoim repozytorium.
+
+![](fig/hub_1.png)
+
+Z listy dostępnych oddziałów wybierz nowy branch **update-response**.
+
+Następnie kliknij link X **commits**. Gdzie X - to nazwa którą wprowadziłeś. 
+
+Wybranie tego łącza powoduje wyświetlenie wszystkich zatwierdzeń w tej gałęzi, a zatwierdzenie utworzone wcześniej w tym ćwiczeniu powinno znaleźć się na górze.
+
+### Następne kroki
+
+Kiedy pracujesz nad prawdziwym projektem typu open source, możesz chcieć utworzyć żądanie ściągnięcia (PR), aby dodać zatwierdzenia w rozwidleniu do kodu źródłowego projektu, który jest przechowywany w repozytorium nadrzędnym. Aby uzyskać więcej informacji, zobacz [Informacje o żądaniach ściągnięcia](https://docs.github.com/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests).

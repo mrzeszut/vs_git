@@ -1,0 +1,239 @@
+---
+title: "GitHub w Visual Studio Code"
+author: Mateusz Rzeszutek
+date: today 
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    toc-location: right
+    toc-title: Spis Treści
+    number-sections: true
+    number-depth: 3
+    embed-resources: true
+    html-math-method: katex
+    code-tools: true
+    code-block-bg: true
+    code-fold: show
+    code-summary: "Show and hide code"
+    link-external-icon: true
+    link-external-newwindow: true
+    smooth-scroll: true
+    self-contained: true
+    citation: true
+    bibliography: D:\\Qnap\\dydaktyka\\1_dzienne\\Kurs_R_SPD\\Temat_1_konf\\moja_bib.bib
+    theme: 
+        dark: solar
+        light: flatly
+    fontsize: 1.0em
+    linestretch: 1.3
+    fig-align: center
+execute: 
+  echo: true
+  error: false
+  warning: false
+  output: true
+--- 
+
+<style type="text/css"> body {text-align: justify}  </style>
+
+## Wprowadzenie
+
+Dowiesz się, jak korzystać z integracji GitHub w programie Visual Studio Code, w tym uwierzytelniać, publikować repozytoria i wyświetlać oś czasu repozytorium.
+
+* Zaloguj się do usługi GitHub przy użyciu programu Visual Studio Code.
+* Użyj Visual Studio Code, aby przeszukać GitHub w poszukiwaniu repozytoriów.
+* Sklonuj repozytorium z Visual Studio Code.
+* Opublikuj lokalny projekt w usłudze GitHub przy użyciu programu Visual Studio Code.
+* Wyświetl oś czasu aktywności w repozytorium GitHub.
+
+***
+
+**DEFINICJE:** 
+
+**Visual Studio Code** to lekki i darmowy edytor kodowania, z którego korzysta wielu programistów na całym świecie. 
+
+**GitHub** to platforma kontroli wersji do hostowania projektów programistycznych. 
+
+Visual Studio Code zapewnia zintegrowane środowisko GitHub, ułatwiając zarządzanie projektami z poziomu edytora kodu.
+
+***
+
+GitHub można wykorzystać w projekcie na wiele sposobów: 
+
+* Sklonować projekt, aby uzyskać jego kopię, nad którą możesz pracować. 
+* Masz lokalny projekt, który chcesz umieścić w GitHub.
+
+Zanim będziesz mógł zrobić cokolwiek z GitHub, musisz upewnić się, że możesz się uwierzytelnić. Zwykle może to być żmudny, wieloetapowy proces obejmujący generowanie **kluczy SSH** i pracę z nimi. Jedną z zalet używania programu Visual Studio Code do pracy z usługą GitHub jest to, że **obsługuje on całą konfigurację uwierzytelniania**.
+
+
+## Uwierzytelnij konto GitHub w VS code
+
+Możesz wybrać **ikonę konta u dołu paska aktywności** i zalogować się na swoje konto GitHub. Zostanie otwarta przeglądarka i zostaniesz poproszony o przyznanie pozwolenia Visual Studio Code na dostęp do usługi GitHub.
+
+Ten krok jest potrzebny do połączenia Visual Studio Code z usługą GitHub. Nie przechowuje żadnych wrażliwych informacji. Po wybraniu opcji Kontynuuj nastąpi przekierowanie z powrotem do programu Visual Studio Code.
+
+
+## Dostęp do konta
+
+Gdy zalogujesz się na swoje konto GitHub w Visual Studio Code, różne rozszerzenia lub części Visual Studio Code mogą teraz uzyskiwać dostęp do informacji o Twoim koncie GitHub. Po zalogowaniu możesz wybrać, które rozszerzenia Visual Studio Code mogą używać Twojego uwierzytelniania GitHub.
+
+Aby zobaczyć wszystkie rozszerzenia korzystające z Twojego konta GitHub, wybierz **ikonę konta**, wybierz swoją nazwę użytkownika GitHub i wybierz **Zarządzaj zaufanymi rozszerzeniami**. GitHub odnosi się do wbudowanych funkcji GitHub i kontroli źródła w Visual Studio Code.
+
+Zobaczysz, że rozszerzenie **GitHub Pull Requests and Issues** ma dostęp. Możesz cofnąć ten dostęp w dowolnym momencie. Zawsze możesz wylogować się z konta GitHub w Visual Studio Code również za pomocą menu z kołem zębatym.
+
+
+## Funkcje GitHub w VS Code 
+
+Ponieważ jesteś zalogowany, Visual Studio Code pomoże Ci teraz **uruchomić i opublikować repozytorium na Twoim koncie GitHub** za naciśnięciem jednego przycisku. Umożliwi to również wyszukiwanie repozytoriów utworzonych w GitHub, dzięki czemu można je sklonować lokalnie.
+
+Rozszerzenie GitHub Pull Requests and Issues zawiera jeszcze więcej funkcji GitHub. W tym module najpierw przyjrzymy się wbudowanym.
+
+
+### Ćwiczenie - zaloguj się
+***
+* Upewnij się, że masz zainstalowaną **najnowszą wersję programu Visual Studio Code**. Wybierz ikonę Profil/konta na pasku aktywności, wybierz opcję Sprawdź aktualizacje, a następnie w razie potrzeby zainstaluj najnowszą wersję.
+* Wybierz ikonę rozszerzeń na pasku aktywności. Wyszukaj rozszerzenie **GitHub Pull Requests and Issues** i zainstaluj
+* Po zainstalowaniu rozszerzenia możesz wybrać **ikonę Konto** u dołu paska aktywności i wybrać opcję **Zaloguj się**, aby korzystać z rozszerzenia.
+
+
+## Opublikuj repozytorium
+
+Jeśli zaczynasz od nowego projektu, którego jeszcze nie wysłałeś do GitHub, proces umieszczania go w GitHub składa się z kilku kroków:
+
+* Utwórz repozytorium GitHub na Github.com.
+* Skopiuj zdalny punkt końcowy.
+* Działaj **git init** lokalnie.
+* Dodaj zdalny punkt końcowy.
+* Określ, które elementy mają zostać wypchnięte do usługi GitHub za pomocą pliku `.gitignore`. 
+* Pliki sceniczne.
+* Dodaj wiadomość zatwierdzenia.
+* Wciśnij do repozytorium.
+
+Wiele kroków oznacza dużo pracy. Visual Studio Code ma wbudowaną funkcję publikowania, która w pełni automatyzuje ten proces.
+
+***
+
+Istnieją dwa sposoby publikowania projektu w serwisie GitHub z Visual Studio Code: z widoku **Zarządzanie kontrolą źródła** (SCM) i z **palety poleceń**. Aby zobaczyć te opcje, musisz mieć otwarty folder w Visual Studio Code.
+
+::: {.callout-tip}
+Zawsze możesz również użyć Git z wbudowanego terminala w Visual Studio Code '(Ctrl+`)'. To, że używasz wizualnych narzędzi do kontroli źródła w Visual Studio Code, nie oznacza, że musisz całkowicie zrezygnować z ukochanego wiersza poleceń!
+:::
+
+Wybranie przysiscku **publikuj do GitHub** w zakąłdce **kontrola źródła** rozpocznie proces publikowania:
+
+* Określ nazwę repozytorium do utworzenia w serwisie GitHub.
+* Określ, które pliki mają zostać wypchnięte do GitHub. Wszystkie pliki, których nie wybierzesz, są automatycznie dodawane do pliku .gitignore, który jest tworzony podczas procesu publikowania.
+* Twój kod jest wystawiany i zatwierdzany z komunikatem „pierwsze zatwierdzenie”.
+* Twój kod jest przekazywany do nowo utworzonego repozytorium GitHub.
+
+**Publikuj z palety poleceń:** Jeśli Twój projekt został już uruchomiony lokalnie dla usługi GitHub, nie zobaczysz przycisku publikowania w widoku SCM. Nadal możesz opublikować swój projekt w serwisie GitHub, korzystając z opcji Publikuj w serwisie GitHub na **palecie poleceń**.
+
+::: {.callout-note appearance="simple"}
+Nie zostanie wyświetlony monit o podanie elementów, które chcesz wypchnąć, jeśli Twój projekt zawiera już plik `.gitignore`.
+:::
+
+### Ćwiczenie
+***
+
+:::{.callout-tip appearance="simple"}
+Zwykle musisz utworzyć repozytorium na GitHub, zanim będziesz mógł opublikować swój kod. Visual Studio Code pozwala to zrobić bezpośrednio z poziomu edytora. 
+:::
+
+***
+
+**Krok 1: Utwórz nowy projekt** Utwórz folder na swoim komputerze o nazwie `mslearn-demo`. W programie Visual Studio Code wybierz **menu file**, a następnie wybierz opcję **Otwórz folder**. Wybierz folder **mslearn-demo**.
+
+***
+
+**Krok 2: Utwórz plik README.md** - Plik README jest tym, co ludzie widzą, gdy odwiedzają Twoje repozytorium na Github.com. Aby uzyskać więcej informacji na temat celu i zawartości pliku README, zapoznaj się z modułem  [open source w serwisie GitHub](https://learn.microsoft.com/en-us/training/modules/create-open-source-program-github/).
+
+1) W menu `Plik` wybierz `Nowy plik` lub (`CTRL + N`). 
+2) Dodaj następujący tekst do pliku.
+
+````
+# My GitHub Project
+
+This is my GitHub project. I published it directly from Visual Studio Code.
+````
+
+3) Zapisz plik jako `README.md`
+
+***
+
+**Krok 3 opublikuj repozytorium** 
+
+1) Otwórz widok **Zarządzanie kontrolą źródła (SCM)**, wybierając ikonę SCM na pasku działań. 
+2) Wybierz **Opublikuj w GitHub**.
+3) W monicie wybierz **Opublikuj w publicznym repozytorium GitHub**.
+4) Usuń zaznaczenie pliku `.env.development`, ponieważ nie chcemy go publikować w serwisie GitHub.
+5) wybierz *ok*
+
+***
+
+**Krok 4: Wyświetl projekt na GitHub**
+
+1) Wybierz pozycję Otwórz w usłudze GitHub z powiadomienia w programie Visual Studio Code.
+2) Zobacz swoje repozytorium na Github.com.
+3) Zauważ, że komunikat zatwierdzenia jest ustawiony na pierwsze zatwierdzenie.
+4) Zauważ, że Twój projekt ma nowy plik o nazwie `.gitignore`. Visual Studio Code dodał ten plik podczas procesu publikowania.
+
+*** 
+
+**Krok 5: Sprawdź plik .gitignore w kodzie programu Visual Studio**
+
+1) W Visual Studio Code wybierz menu Widok .
+2) Wybierz Eksploratora z listy rozwijanej.
+3) Wybierz plik `.gitignore`.
+
+Zwróć uwagę, że plik `.env.development` został dodany do `.gitignore`. Wszelkie pliki lub katalogi dodane tutaj nie zostaną przekazane do GitHub.
+
+***
+
+Podsumujmy, co zrobiłeś w tej sekcji:
+
+* Utworzono nowy projekt i plik README
+* Opublikowano projekt w serwisie GitHub z programu Visual Studio Code
+* Zobaczyłem, że repozytorium zostało utworzone na Github.com
+* Zbadano plik .gitignore , który został utworzony automatycznie, gdy zdecydowałeś się nie dołączać pliku .env.development
+
+Visual Studio Code obsłużył całą żmudną pracę, która musi być wykonywana za kulisami, aby ten przepływ pracy wydawniczej był bezproblemowy.
+
+:::{.callout-important appearance="simple"}
+Jednak wiele razy zaczniesz projekt z GitHub, a nie z komputera lokalnego. W następnej sekcji zobaczysz, jak program Visual Studio Code umożliwia klonowanie repozytoriów z edytora.
+:::
+
+## Klonuj istniejące repozytorium
+
+Wyobraź sobie, że chcesz przyczynić się do innego projektu znalezionego w serwisie GitHub. Chcesz przenieść to zdalne repozytorium na komputer lokalny, aby móc zacząć z niego korzystać. Chcesz także poznać repozytorium i zrozumieć, jak ono działa, abyś mógł wnieść znaczący wkład.
+
+**Klonowanie repo** - Kiedy klonujesz repozytorium z GitHub, kopia tego repozytorium jest pobierana na twój komputer. Jeśli klonujesz za pomocą Git CLI, musisz wprowadzić swoje dane uwierzytelniające GitHub. Musisz także ustawić zdalny adres URL lokalnego repozytorium. Zdalny adres URL jest wymagany, aby Git wiedział, gdzie przekazać zmiany. 
+
+Możesz sklonować repozytorium z usługi GitHub przy użyciu Eksploratora kodu programu Visual Studio lub palety poleceń. Naciśnij `CTRL+SHIFT+P` i w pisz `clone` - pojawi sie `git: clone`. 
+
+Gdy wybierzesz "Git: clone", zobaczysz opcję wprowadzenia **adresu URL repozytorium** lub wybrania Klonuj z GitHub . Zobaczysz listę repozytoriów utworzonych przez siebie w witrynie GitHub.com. Możesz nawet wyszukać inne repozytoria w witrynie GitHub.com.
+
+Gdy wybierzesz repozytorium, które chcesz sklonować, Visual Studio Code sklonuje je za pośrednictwem protokołu HTTPS. Po zakończeniu program Visual Studio Code wyświetli monit o otwarcie folderu. Visual Studio Code konfiguruje zdalny adres URL, więc nie musisz się martwić o konfigurowanie czegokolwiek.
+
+***
+
+**Co teraz?**
+
+Gdy chcesz przyczynić się do projektu, często zaczynasz od przeglądania plików, aby zrozumieć, co się dzieje i poznać historię projektu. Aby ułatwić przeglądanie historii projektu, Visual Studio Code udostępnia **widok osi czasu**, który pokazuje wszystkie poprzednie zatwierdzenia dokonane w każdym pliku. Jest to pomocne, gdy chcesz uzyskać kontekst repozytorium, zobaczyć, kto przyczynił się do jego powstania i zrozumieć, jak stare lub najnowsze są zmiany w projekcie.
+
+Visual Studio Code otwiera **edytor różnic** po wybraniu **zatwierdzeń w widoku osi czasu**. Edytor różnic to wygodny sposób porównywania zmian między bieżącą wersją a konkretnym zatwierdzeniem oraz zrozumienia historii pliku. Przeglądając zatwierdzenia w widoku Oś czasu, możesz szybko zorientować się, które części projektu wymagają aktualizacji lub konserwacji.
+
+
+### Ćwiczenie klonuj repozytorium
+***
+
+1) Otwórz nowe okno Visual Studio Code. Naciśnij `CTRL+SHIFT+P` i wpisz `clone` a nstępnie wybierz `git: clone`. 
+2) Wybierz opcję Klonuj z GitHub z listy rozwijanej, a znajdziesz listę swoich repozytoriów. Możesz także wyszukać inne repozytoria na GitHub. Wyszukaj repozytorium przy użyciu ścieżki `MicrosoftDocs/mslearn-python-products` i wybierz pierwszą opcję.
+3) Wybierz lokalizację na komputerze, w której chcesz sklonować repozytorium.
+4) Wybierz Otwórz z wyskakującego okienka, które pojawia się po sklonowaniu repozytorium przez Visual Studio Code.
+5) Otwórz plik `README.md` w Eksploratorze. Po umieszczeniu pliku w edytorze rozwiń okienko Oś czasu .
+6) Wybierz zatwierdzenie dokonane przez użytkownika Burke Holland . Ten krok otwiera widok różnic tylko do odczytu, dzięki czemu można zobaczyć wszystkie zmiany powiązane z zatwierdzeniem. Zielone podświetlenie pokazuje, że Burke dodał te linie do oryginalnej treści.
+
+:::{.callout-important}
+[20 porad i sztuczek](https://vscode.github.com/) i [Strona VS Code - Source control](https://code.visualstudio.com/docs/sourcecontrol/overview)
+:::
