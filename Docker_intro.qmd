@@ -1,0 +1,591 @@
+---
+title: "Wprowadznei do Docker"
+author: Mateusz Rzeszutek
+date: today 
+format: 
+  html:
+    toc: true
+    toc-depth: 4
+    toc-location: right
+    toc-title: Spis Treści
+    number-sections: true
+    number-depth: 4
+    embed-resources: true
+    html-math-method: katex
+    code-tools: true
+    code-block-bg: true
+    code-block-border-left: "blue"
+    code-fold: show
+    code-summary: "Show and hide code"
+    link-external-icon: true
+    link-external-newwindow: true
+    smooth-scroll: true
+    self-contained: true
+    citation: true
+    bibliography: D:\\Qnap\\dydaktyka\\1_dzienne\\Kurs_R_SPD\\Temat_1_konf\\moja_bib.bib
+    theme: 
+        dark: solar
+        light: flatly
+    fontsize: 1.0em
+    linestretch: 1.3
+    fig-align: center
+execute: 
+  echo: true
+  error: false
+  warning: false
+  output: true
+--- 
+
+<style type="text/css"> body {text-align: justify}  </style>
+
+## Wprowadzenie 
+
+Obecnie zespoły muszą szybko wydawać aplikacje, aby przyciągnąć i utrzymać partnerów biznesowych. To wymaganie wymusza na zespołach programistycznych i pomocy technicznej poszukiwanie rozwiązań, które oszczędzają czas i obniżają koszty. Idealne rozwiązanie skróci czas poświęcany na tworzenie i konfigurowanie środowisk wdrażania oraz uprości proces wdrażania oprogramowania.
+
+Technologia **konteneryzacji oprogramowania** zdobywa coraz większą popularność jako rozwiązanie oszczędzające czas i zmniejszające koszty. Jedną z zalet konteneryzacji jest to, że nie trzeba konfigurować sprzętu ani instalować systemów operacyjnych i oprogramowania umożliwiającego **hostowanie wdrożenia**. Kontenery są odizolowane od siebie i wiele z nich może działać na tym samym sprzęcie. Taka konfiguracja pomaga nam w wydajniejszym wykorzystywaniu sprzętu i ulepszaniu zabezpieczeń aplikacji.
+
+Załóżmy, że w internetowym detalicznym sklepie odzieżowym, dla którego pracujesz, planuje się opracowanie kilku aplikacji wewnętrznych. Twój zespół opracowuje i testuje wszystkie aplikacje w środowisku lokalnym, a następnie wdraża je na platformie Azure na potrzeby testowania przedprodukcyjnego i końcowego hostowania produkcyjnego. Szukasz rozwiązania, które zapewnia maksymalną zgodność w każdym środowisku bez konieczności wprowadzania zmian w konfiguracji lub z niewielkimi jej zmianami. Skorzystanie z platformy Docker jako rozwiązania konteneryzacji wydaje się być idealnym rozwiązaniem.
+
+W tej lekcji dowiesz się, w jaki sposób można utworzyć własne kontenery na platformie Docker. Dowiesz się również, jak działa infrastruktura platformy Docker w tle. Celem tej lekcji jest ułatwienie podjęcia decyzji o tym, czy kontenery platformy Docker są właściwym wyborem dla Twojej firmy.
+
+***
+
+**Cele szkolenia**
+
+Ten moduł obejmuje następujące zagadnienia:
+
+* Ocena przydatności platformy Docker jako odpowiedniej platformy konteneryzacji
+* Opis sposobu obsługi implementacji kontenerów obliczeniowych przez składniki kontenerów platformy Docker.
+
+***
+
+**Wymagania**
+
+* Podstawowa wiedza na temat pojęć dotyczących wirtualizacji systemu operacyjnego
+* Podstawowa wiedza na temat aplikacji opartych na wierszu polecenia
+
+
+## Docker
+
+Przed rozpoczęciem krótkiego przewodnika po **kontenerach platformy Docker** przyjrzyjmy się, w jaki sposób nasz zespół opracowuje i wdraża aplikacje. Krótko opiszemy również niektóre wyzwania, przed którymi stoją zespoły programistów.
+
+W proces tworzenia aplikacji i zarządzania nimi w firmie zwykle jest zaangażowany co najmniej jeden zespół. Na przykład zespół programistyczny tworzy oprogramowanie, a zespół operacyjny jest odpowiedzialny za wdrażanie powstałych aplikacji. Zespół operacyjny jest również odpowiedzialny za zarządzanie infrastrukturą hostującą aplikacje.
+
+Załóżmy na przykład, że opracowujemy portal śledzenia zamówień, z którego będą korzystały różne punkty sprzedaży należące do firmy. W procesie opracowywania i publikowania nasze aplikacje są hostowane w kilku środowiskach. Najpierw zespół programistyczny opracowuje i testuje oprogramowanie w środowisku programistycznym. Z tego miejsca oprogramowanie jest wdrażane w środowisku kontroli jakości, a następnie w środowisku przedprodukcyjnym i w docelowym środowisku produkcyjnym.
+
+W powyższym scenariuszu jest kilka kwestii, które musimy wziąć pod uwagę:
+
+***
+
+**Zarządzanie środowiskami hostingu**
+
+Wszystkie rodzaje środowisk wymagają zarządzania oprogramowaniem i sprzętem. Musimy mieć pewność, że w każdym z nich zarówno zainstalowane oprogramowanie, jak i skonfigurowany sprzęt są takie same. Musimy również skonfigurować w sposób spójny i łatwo powtarzalny kilka aspektów, takich jak dostęp do sieci, magazyn danych i zabezpieczenia środowiska.
+
+**Ciągłość dostarczania oprogramowania**
+
+Wdrażanie aplikacji w środowiskach musi być spójne. Każdy pakiet wdrożeniowy musi zawierać wszystkie pakiety systemowe, pliki binarne, biblioteki, pliki konfiguracji i inne elementy, które zapewnią, że aplikacja będzie w pełni funkcjonalna. Musimy się również upewnić, że wszystkie te zależności są zgodne z wersjami oprogramowania i architekturą.
+
+**Wydajne wykorzystanie sprzętu**
+
+Każda wdrożona aplikacja musi działać w taki sposób, aby była odizolowana od innych aplikacji uruchomionych na tym samym sprzęcie. Chcemy, aby na serwerze mogła działać więcej niż jedna aplikacja, aby jak najlepiej wykorzystać zasoby, a jednocześnie nie wpływać negatywnie na inne aplikacje.
+
+**Przenośność aplikacji**
+
+Możliwość przenoszenia aplikacji jest istotna z kilku powodów. Środowisko hostingu może ulec awarii lub może zajść konieczność skalowania aplikacji. W obu przypadkach potencjalnym rozwiązaniem jest ponowne wdrożenie naszego oprogramowania w nowym środowisku. Chcemy przenieść oprogramowanie z jednego hosta na inny, nawet jeśli ich bazowe infrastruktury są inne. Takie przeniesienie musi nastąpić tak szybko, jak to możliwe, aby skrócić przestoje dla naszych klientów.
+
+Zanim przyjrzymy się funkcjom platformy Docker, które pomagają rozwiązać te problemy, omówimy kilka pojęć i zapoznamy się z krótkim omówieniem architektury platformy Docker.
+
+***
+
+### Kontener
+***
+
+Kontener to luźno izolowane środowisko, w którym można kompilować i uruchamiać pakiety oprogramowania. Te pakiety oprogramowania obejmują kod i wszystkie zależności umożliwiające szybkie i niezawodne uruchamianie aplikacji w dowolnym środowisku obliczeniowym. Nazywamy takie pakiety obrazami kontenerów.
+
+Obraz kontenera staje się jednostką używaną do dystrybucji naszych aplikacji.
+
+
+### Konteneryzaja oprogramowania
+***
+
+Konteneryzacja oprogramowania to metoda wirtualizacji systemu operacyjnego używana do wdrażania i uruchamiania kontenerów bez użycia maszyny wirtualnej. Kontenery mogą być uruchamiane na sprzęcie fizycznym, w chmurze, na maszynach wirtualnych i w wielu systemach operacyjnych.
+
+
+### Docker
+***
+
+Docker to platforma konteneryzacji służąca do tworzenia, dostarczania i uruchamiania kontenerów. Platforma Docker nie używa funkcji **hypervisor**, więc jeśli tworzysz i testujesz aplikacje, możesz uruchomić platformę Docker na komputerze stacjonarnym lub laptopie. Wersja klasyczna platformy Docker obsługuje systemy **Linux**, **Windows** i **macOS**. Platforma Docker jest dostępna dla produkcyjnych środowisk serwerowych, w tym wielu wariantów systemów Linux i Microsoft Windows Server 2016 oraz nowszych wersji. Wiele chmur, w tym platforma Azure, obsługuje platformę Docker.
+
+
+### Archutektura platformy docker
+***
+
+Platforma Docker obejmuje kilka składników, dzięki którym możliwe jest kompilowanie i uruchamianie konteneryzowanych aplikacji oraz zarządzanie nimi.
+
+
+![](fig/doker_1.svg)
+
+***
+
+**Aparat platformy Docker**
+
+Aparat platformy Docker obejmuje kilka składników skonfigurowanych jako implementacje typu **klient-serwer**, w których klient i serwer działają jednocześnie **na tym samym hoście**. Klient komunikuje się z serwerem przy użyciu interfejsu **API REST**, który umożliwia klientowi również komunikację z wystąpieniem serwera zdalnego.
+
+***
+
+**Klient platformy Docker**
+
+Klient platformy Docker to **aplikacja wiersza polecenia o nazwie docker**. Umożliwia ona interakcję z serwerem platformy Docker za pomocą interfejsu wiersza polecenia. Polecenie docker używa interfejsu **API REST** platformy Docker do wysyłania instrukcji do lokalnego lub zdalnego serwera i działa jako podstawowy interfejs używany do zarządzania kontenerami.
+
+***
+
+**Serwer platformy Docker**
+
+Serwer platformy Docker jest demonem o nazwie **dockerd**. Demon dockerd reaguje na żądania klienta za pośrednictwem interfejsu API REST platformy Docker i może wchodzić w interakcje z innymi demonami. Serwer platformy Docker jest również odpowiedzialny za śledzenie cyklu życia naszych kontenerów.
+
+***
+
+**Obiekty platformy Docker**
+
+Wdrożenia kontenerów będą obsługiwane przez kilka obiektów, które utworzysz i skonfigurujesz. Są to obiekty sieciowe, woluminy magazynu, wtyczki i inne obiekty usług. W tym miejscu nie będziemy omawiać wszystkich tych obiektów, ale warto pamiętać, że te obiekty są elementami, które możemy tworzyć i wdrażać w miarę potrzeb.
+
+***
+
+
+### Docker Hub
+***
+
+Docker Hub to **rejestr kontenerów oprogramowania** jako usługi (SaaS) Docker. Rejestry Docker to repozytoria, których używamy do przechowywania i dystrybucji tworzonych przez nas obrazów kontenerów. Docker Hub to domyślny rejestr publiczny używany przez platformę Docker do zarządzania obrazami.
+
+Pamiętaj, że możesz utworzyć i używać prywatnego rejestru Docker lub skorzystać z jednej z wielu dostępnych opcji dostawców chmury. Na przykład możesz użyć Azure Container Registry do przechowywania obrazów kontenerów do użycia w kilku usługach obsługujących kontenery platformy Azure.
+
+
+## Zasady działania platformy docker
+
+Jak pamiętasz, obraz kontenera staje się jednostką używaną do dystrybucji aplikacji. Wspominaliśmy także, że kontener jest standardowym formatem używanym zarówno przez nasz zespół programistyczny, jak i operacyjny.
+
+W tym miejscu przyjrzymy się różnicom między oprogramowaniem, pakietami i obrazami używanymi na platformie Docker. Znajomość różnic między tymi koncepcjami pomoże nam lepiej zrozumieć, jak działają obrazy platformy Docker.
+
+Opiszemy również krótko role systemu operacyjnego działającego na hoście i w kontenerze.
+
+
+### Oprogramowanie spakowane w kontenerze
+***
+Oprogramowanie spakowane w kontenerze nie jest ograniczone do aplikacji, które kompilują nasi deweloperzy. Kiedy mówimy o oprogramowaniu, mamy na myśli działające w kontenerze kod aplikacji, pakiety systemowe, pliki binarne, biblioteki, pliki konfiguracji i system operacyjny.
+
+Załóżmy na przykład, że opracowujemy portal śledzenia zamówień, z którego będą korzystały różne punkty sprzedaży należące do firmy. Nasze aplikacje internetowe będą obsługiwane przez stos oprogramowania, który musimy traktować całościowo. Kompilujemy aplikację MVC platformy .NET Core i planujemy ją wdrożyć przy użyciu serwera Nginx jako zwrotnego serwera proxy w systemie Ubuntu Linux. Wszystkie te składniki oprogramowania stanowią część obrazu kontenera.
+
+
+### Kontener
+***
+Obraz kontenera jest przenośnym pakietem zawierającym oprogramowanie. Kiedy obraz zostanie uruchomiony, staje się naszym kontenerem. Kontener to wystąpienie obrazu w pamięci.
+
+Nie można zmienić obrazu kontenera. Po skompilowaniu obrazu nie można go zmodyfikować. Jedynym sposobem zmiany obrazu jest utworzenie nowego obrazu. Ta funkcja gwarantuje, że obraz używany w środowisku produkcyjnym jest tym samym obrazem, którego użyto podczas programowania i kontroli jakości.
+
+
+### System opracyjny hosta
+***
+**System operacyjny hosta to system operacyjny, w którym działa aparat platformy Docker - np. system na twoim komputerze**. Kontenery platformy Docker działające w systemie Linux współużytkują jądro systemu operacyjnego hosta i nie wymagają systemu operacyjnego kontenera, o ile dane binarne mogą bezpośrednio uzyskiwać dostęp do jądra systemu operacyjnego.
+
+![](fig/doker_2.svg)
+
+Kontenery systemu Windows potrzebują jednak systemu operacyjnego kontenera. Kontener zarządza usługami, takimi jak system plików, zarządzanie siecią, planowanie procesów i zarządzanie pamięcią, za pośrednictwem jądra systemu operacyjnego.
+
+
+### System operacyjny kontenera
+***
+System operacyjny kontenera jest systemem operacyjnym, który jest częścią spakowanego obrazu. W kontenerze można umieszczać różne wersje systemów operacyjnych Linux i Windows. Ta elastyczność pozwala nam uzyskać dostęp do określonych funkcji systemu operacyjnego lub zainstalować dodatkowe oprogramowanie, którego mogą używać nasze aplikacje.
+
+[](fig/doker_3.svg)
+
+System operacyjny kontenera jest izolowany od systemu operacyjnego hosta i jest środowiskiem, w którym wdrażamy i uruchamiamy naszą aplikację. W połączeniu z niezmiennością obrazu ta izolacja gwarantuje, że środowisko programistyczne naszej aplikacji jest takie samo jak środowisko produkcyjne.
+
+### Co to jest jednolity stosowy system plików
+***
+System `Unionsoft` służy do tworzenia obrazów platformy Docker. Unionfs to system plików, który umożliwia układanie w stos katalogów nazywanych gałęziami w taki sposób, że wydaje się, że zawartość została scalona. Jednak zawartość jest fizycznie niezależna. System Unionfs umożliwia dodawanie i usuwanie gałęzi w miarę rozszerzania systemu plików.
+
+![](fig/doker_4.svg)
+
+Załóżmy na przykład, że tworzymy obraz dla naszej aplikacji internetowej, bazując na wcześniejszym obrazie. Dystrybucję systemu Ubuntu ułożymy w obrazie podstawowym jako warstwę leżącą nad warstwą rozruchowego systemu plików. Następnie zainstalujemy serwer Nginx i naszą aplikację internetową. Efektywnie umieszczamy serwer Nginx i aplikację internetową jako warstwę nad oryginalnym obrazem systemu Ubuntu.
+
+Końcowa warstwa z możliwością zapisu jest tworzona po uruchomieniu kontenera na podstawie obrazu. Ta warstwa nie zostanie jednak zachowana, gdy kontener zostanie zniszczony.
+
+
+### Co to jest obraz podstawowy?
+***
+Obraz podstawowy jest obrazem korzystającym z obrazu scratch platformy Docker. Obraz scratch jest pustym obrazem kontenera, który nie tworzy warstwy systemu plików. W przypadku tego obrazu przyjmuje się założenie, że aplikacja, która ma zostać uruchomiona, może bezpośrednio korzystać z jądra systemu operacyjnego hosta.
+
+
+###  Co to jest obraz nadrzędny?
+***
+Obraz nadrzędny to obraz kontenera, na podstawie którego są tworzone obrazy użytkownika. Na przykład zamiast tworzyć obraz na podstawie obrazu scratch, a następnie instalować w nim system Ubuntu, lepiej od razu użyć obrazu opartego na systemie Ubuntu. Można nawet użyć obrazu, w którym zainstalowano już serwer Nginx. Obraz nadrzędny zwykle zawiera system operacyjny kontenera.
+
+
+### Jaka jest główna różnica między obrazami podstawowymi i nadrzędnymi?
+***
+Oba typy obrazów pozwalają nam utworzyć obraz wielokrotnego użytku. Obrazy podstawowe pozwalają nam jednak na większą kontrolę nad zawartością obrazu końcowego. Jak pamiętasz, obraz jest niezmienny. Można do niego tylko dodawać elementy, ale nie można ich usuwać.
+
+
+### Co to jest plik Dockerfile?
+***
+Dockerfile to plik tekstowy, który zawiera instrukcje dotyczące kompilowania i uruchamiania obrazu platformy Docker. Zdefiniowane są następujące aspekty obrazu:
+
+* Obraz podstawowy lub nadrzędny używany do tworzenia nowego obrazu
+* Polecenia służące do aktualizowania podstawowego systemu operacyjnego i instalowania dodatkowego oprogramowania
+* Artefakty kompilacji do dołączenia, takie jak opracowana aplikacja
+Usługi do uwidocznienia, takie jak konfiguracja magazynu i sieci
+* Polecenie wykonywane podczas uruchamiania kontenera
+
+Zamapujmy te aspekty na przykładowy plik Dockerfile. Załóżmy, że tworzymy obraz platformy Docker dla witryny internetowej platformy ASP.NET Core. Plik Dockerfile może wyglądać podobnie jak w poniższym przykładzie.
+
+```{Bash}
+# Step 1: Specify the parent image for the new image
+FROM ubuntu:18.04
+
+# Step 2: Update OS packages and install additional software
+RUN apt -y update &&  apt install -y wget nginx software-properties-common apt-transport-https \
+	&& wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
+	&& dpkg -i packages-microsoft-prod.deb \
+	&& add-apt-repository universe \
+	&& apt -y update \
+	&& apt install -y dotnet-sdk-3.0
+
+# Step 3: Configure Nginx environment
+CMD service nginx start
+
+# Step 4: Configure Nginx environment
+COPY ./default /etc/nginx/sites-available/default
+
+# STEP 5: Configure work directory
+WORKDIR /app
+
+# STEP 6: Copy website code to container
+COPY ./website/. .
+
+# STEP 7: Configure network requirements
+EXPOSE 80:8080
+
+# STEP 8: Define the entry point of the process that runs in the container
+ENTRYPOINT ["dotnet", "website.dll"]
+```
+
+Nie będziemy tutaj omawiać specyfikacji pliku Dockerfile ani szczegółów każdego polecenia w powyższym przykładzie. Zauważ jednak, że w tym pliku jest kilka poleceń, które pozwalają nam manipulować strukturą obrazu.
+
+Przypomnijmy, wspomnieliśmy wcześniej, że obrazy Dockera korzystają z unionfs . Każdy z tych kroków tworzy buforowany obraz kontenera podczas tworzenia ostatecznego obrazu kontenera. Te tymczasowe obrazy są nakładane na poprzednie i prezentowane jako pojedynczy obraz po zakończeniu wszystkich kroków.
+
+Na koniec zwróć uwagę na ostatni krok. W `ENTRYPOINT` plik wskazuje, który proces zostanie wykonany, gdy uruchomimy kontener z obrazu.
+
+
+### Jak zarządzać obrazami Dockera
+*** 
+
+Obrazy Dockera to duże pliki, które początkowo są przechowywane na twoim komputerze i potrzebujemy narzędzi do zarządzania tymi plikami.
+
+Docker CLI pozwala nam zarządzać obrazami poprzez ich tworzenie, wyświetlanie, usuwanie i uruchamianie. Zarządzamy obrazami Dockera za pomocą **docker klienta**. Klient nie wykonuje poleceń bezpośrednio i wysyła wszystkie zapytania do **dockerd demona**.
+
+Nie będziemy tutaj omawiać wszystkich poleceń klienckich i flag poleceń, ale przyjrzymy się niektórym najczęściej używanym poleceniom. Oststanie Sekcja w tym module zawiera łącza do dokumentacji platformy Docker, która szczegółowo opisuje wszystkie polecenia i flagi poleceń.
+
+
+###  Tworzenie obrazu
+***
+
+Używamy `docker build` polecenia do budowania obrazów Dockera. Załóżmy, że używamy wcześniejszej definicji Dockerfile do zbudowania obrazu. Oto przykład pokazujący polecenie kompilacji.
+
+
+```{Bash}
+docker build -t temp-ubuntu .
+```
+
+Nie martw się, jeśli nie rozumiesz powyższego wyniku. Zwróć jednak uwagę na kroki wymienione w danych wyjściowych. Po wykonaniu każdego kroku do tworzonego obrazu dodawana jest nowa warstwa.
+
+Zwróć też uwagę, że wykonujemy szereg poleceń, aby zainstalować oprogramowanie i zarządzać konfiguracją. Na przykład w kroku 2 uruchamiamy polecenia `apt -y update` i `apt install -y`, aby zaktualizować system operacyjny. Te polecenia są wykonywane w uruchomionym kontenerze utworzonym dla tego kroku. Po uruchomieniu polecenia kontener pośredni jest usuwany. Bazowy obraz w pamięci podręcznej jest przechowywany na hoście kompilacji i nie jest automatycznie usuwany. Ta optymalizacja gwarantuje, że późniejsze kompilacje ponownie wykorzystają te obrazy, aby przyspieszyć czas kompilacji.
+
+
+### Image tag
+***
+Znacznik obrazu to ciąg tekstowy używany do wersjonowania obrazu. W przykładowej kompilacji z wcześniejszej wersji zwróć uwagę na ostatni komunikat kompilacji, który brzmi *Successfully tagged temp-ubuntu:latest*. Podczas budowania obrazu nadajemy nazwę i opcjonalnie oznaczamy obraz za pomocą `-t` flagi polecenia. W naszym przykładzie nazwaliśmy obraz za pomocą `-t temp-ubuntu`, podczas gdy wynikowa nazwa obrazu została oznaczona jako `temp-ubuntu: latest`. Obraz jest oznaczony `latest` tagiem, jeśli nie określisz tagu.
+
+Do jednego obrazu można przypisać wiele tagów. Zgodnie z konwencją, najnowsza wersja obrazu ma przypisany najnowszy znacznik oraz znacznik opisujący numer wersji obrazu. Gdy publikujesz nową wersję obrazu, możesz ponownie przypisać najnowszy tag, aby odnosił się do nowego obrazu.
+
+
+### Wyświetl obraz 
+***
+Oprogramowanie Docker automatycznie konfiguruje lokalny rejestr obrazów na twoim komputerze. Możesz przeglądać obrazy w tym rejestrze za pomocą `docker images` polecenia w konsoli. Dane wyjściowe wyglądają jak w poniższym przykładzie.
+
+```{Bash}
+REPOSITORY          TAG                     IMAGE ID            CREATED                     SIZE
+tmp-ubuntu          latest             f89469694960        14 minutes ago         1.69GB
+tmp-ubuntu          version-1.0        f89469694960        14 minutes ago         1.69GB
+ubuntu              18.04              a2a15febcdf3        5 weeks ago            64.2MB
+```
+
+Zwróć uwagę, jak obraz jest wyświetlany wraz z nazwą, znacznikiem i identyfikatorem obrazu. Przypomnij sobie, że do obrazu możemy zastosować wiele etykiet. Oto taki przykład. Chociaż nazwy obrazów są różne, widzimy, że identyfikatory są takie same.
+
+Identyfikator obrazu to przydatny sposób identyfikowania obrazów i zarządzania nimi, w przypadku których nazwa lub znacznik obrazu mogą być niejednoznaczne.
+
+
+### Usuń obraz 
+***
+Możesz usunąć obraz z lokalnego rejestru platformy Docker za pomocą `docker rmi` polecenia. Określ nazwę lub identyfikator obrazu do usunięcia. Ten przykład usuwa obraz dla przykładowej aplikacji internetowej przy użyciu nazwy obrazu:
+
+```{Bash}
+docker rmi temp-ubuntu:version-1.0
+```
+
+Nie możesz usunąć obrazu, jeśli jest on nadal używany przez kontener. Polecenie `docker rmi` zwraca komunikat o błędzie, który zawiera listę kontenerów opartych na obrazie.
+
+Zbadaliśmy podstawy obrazów platformy Docker, jak zarządzać tymi obrazami i jak uruchamiać kontener z obrazu. Następnie przyjrzymy się, jak zarządzać kontenerami.
+
+## Jak działają kontenery docker
+
+Przypomnij sobie, odkryłeś, że kontener staje się jednostką, której będziesz używać do dystrybucji swoich aplikacji. Dowiedziałeś się również, że kontener ma znormalizowany format używany zarówno przez zespoły deweloperskie, jak i operacyjne.
+
+W twoim przykładzie tworzysz portal śledzenia zamówień, z którego będą korzystać różne punkty sprzedaży Twojej firmy. Po zbudowaniu obrazu platformy Docker Twój zespół operacyjny jest teraz odpowiedzialny za wdrażanie, wdrażanie aktualizacji i zarządzanie portalem śledzenia zamówień.
+
+W poprzedniej części przyjrzałeś się, jak zbudowany jest obraz Dockera. Tutaj przyjrzysz się cyklowi życia kontenera Dockera i sposobom zarządzania kontenerami. Przyjrzysz się również, jak myśleć o konfigurowaniu przechowywania danych i opcji sieciowych dla swoich kontenerów.
+
+
+### Jak zarządzać kontenerem 
+***
+
+Kontener Docker ma cykl życia, którym można zarządzać i śledzić stan kontenera.
+
+![](fig/docker_6.png)
+
+Aby umieścić kontener w stanie uruchomienia, użyj polecenia `run`. Możesz także ponownie uruchomić kontener `restart`, który jest już uruchomiony. Podczas ponownego uruchamiania kontenera odbiera on sygnał zakończenia, aby umożliwić płynne zamknięcie wszystkich uruchomionych procesów przed zakończeniem działania jądra kontenera.
+
+Kontener jest uważany za uruchomiony, dopóki nie zostanie wstrzymany, zatrzymany lub zabity. Kontener może jednak również sam wyjść ze stanu uruchomienia. Kontener może sam wyjść po zakończeniu uruchomionego procesu lub gdy proces przejdzie w stan błędu.
+
+Aby wstrzymać działający kontener, użyj polecenia `pause`. To polecenie zawiesza wszystkie procesy w kontenerze.
+
+Aby zatrzymać działający kontener, użyj polecenia `stop`. Polecenie stop umożliwia płynne zamknięcie procesu roboczego poprzez wysłanie mu sygnału zakończenia. Jądro kontenera kończy działanie po zamknięciu procesu.
+
+Aby wysłać sygnał zabicia, jeśli chcesz zakończyć kontener, użyj polecenia `kill`. Uruchomiony proces nie przechwytuje sygnału zabicia, tylko jądro kontenera. To polecenie spowoduje wymuszone zakończenie procesu roboczego w kontenerze.
+
+Na koniec, aby usunąć kontenery, które są w stanie zatrzymania, użyj polecenia `remove`. Po usunięciu kontenera wszystkie dane przechowywane w kontenerze ulegają zniszczeniu.
+
+
+#### Wyświetl kontenery
+***
+Aby wyświetlić listę uruchomionych kontenerów, uruchom `docker ps` polecenie. Aby zobaczyć wszystkie kontenery we wszystkich stanach, przekaż `-a` argument.
+
+```{Bash}
+docker ps -a
+```
+
+Wynik
+
+```{Bash}
+CONTAINER ID    IMAGE        COMMAND         CREATED       STATUS           PORTS        NAMES
+d93d40cc1ce9    tmp-ubuntu:latest  "dotnet website.dll …"  6 seconds ago    Up 5 seconds        8080/tcp      happy_wilbur
+33a6cf71f7c1    tmp-ubuntu:latest  "dotnet website.dll …"  2 hours ago     Exited (0) 9 seconds ago            adoring_borg
+```
+
+Istnieją trzy elementy do przejrzenia w poprzednim wyniku:
+
+* Nazwa obrazu wymieniona w kolumnie `IMAGE`. W tym przykładzie `tmp-ubuntu: latest`. Zwróć uwagę, że możesz utworzyć więcej niż jeden kontener z tego samego obrazu. Ta funkcja to zaawansowana funkcja zarządzania, której używasz do włączania skalowania w swoich rozwiązaniach.
+
+* Status kontenera podany w kolumnie `STATUS`. W tym przykładzie masz jeden uruchomiony kontener i jeden kontener, który został zamknięty. Stan kontenera jest zwykle pierwszym wskaźnikiem kondycji kontenera.
+
+* Nazwa kontenera wymieniona w kolumnie `NAMES`. Oprócz identyfikatora kontenera w pierwszej kolumnie, kontenery otrzymają również nazwę. W tym przykładzie nie podałeś jawnie nazwy dla każdego kontenera, w wyniku czego Docker nadał kontenerowi losową nazwę. Aby nadać kontenerowi jawną nazwę za pomocą `--name` flagi, użyj polecenia `run`.
+
+
+#### Dlaczego kontenerom nadano nazwę?
+***
+
+Ta funkcja umożliwia uruchamianie wielu wystąpień kontenerów tego samego obrazu. Nazwy kontenerów są unikatowe, co oznacza, że jeśli określisz nazwę, nie będzie można jej ponownie użyć do utworzenia nowego kontenera. Jedynym sposobem na ponowne użycie określonej nazwy jest usunięcie poprzedniego kontenera.
+
+#### Polecenia kontenera przykłady
+
+Jak uruchomić kontener ?
+
+```{Bash}
+docker run -d tmp-ubuntu
+```
+
+W tym momencie kontener jest dostępny do zarządzania. Teraz sprawdźć nazwy. Skorzystamy z tych z powyzszego przykładu:
+
+```{Bash}
+docker ps -a
+```
+
+Wstrzymać kontener:
+
+```{Bash}
+docker pause happy_wilbur
+```
+
+Polecenie `docker unpause` wznawia wszystkie procesy w określonych kontenerach. Ponowne uruchomienie kontenera:
+
+```{Bash}
+docker restart happy_wilbur
+```
+
+Jeśli uruchomiony to zatrzymuje i otwiera nowy. Jesli nie może zatrzymać procesu to wykonuje `kill`. Aby zatrzymać uruchomiony kontener:
+
+```{Bash}
+docker stop happy_wilbur
+```
+
+Usuwanie kontenara to:
+
+```{Bash}
+docker rm happy_wilbur
+```
+
+
+### Konfiguracja magazynu kontenera Docker
+***
+
+Jak opisano wcześniej, zawsze traktuj kontenery jako tymczasowe, gdy aplikacja w kontenerze musi przechowywać dane.
+
+Załóżmy, że Twój portal śledzenia tworzy plik dziennika w podfolderze w katalogu głównym aplikacji; czyli bezpośrednio do systemu plików kontenera. Gdy aplikacja zapisuje dane w pliku dziennika, system zapisuje dane w zapisywalnej warstwie kontenera.
+
+Chociaż to podejście działa, ma niestety kilka wad.
+
+* **Przechowywanie kontenerów jest tymczasowe**: Twój plik dziennika nie będzie się zachowywał między instancjami kontenera. Załóżmy na przykład, że zatrzymujesz i usuwasz kontener. Gdy uruchamiasz nową instancję kontenera, nowa instancja opiera się na określonym obrazie, a wszystkie poprzednie dane zostaną utracone. Pamiętaj, że wszystkie dane w kontenerze są niszczone wraz z kontenerem, gdy go usuniesz.
+
+* **Magazyn kontenerów jest połączony z bazową maszyną hosta** Uzyskiwanie dostępu do pliku dziennika lub przenoszenie go z kontenera jest trudne, ponieważ kontener jest połączony z podstawową maszyną hosta. Aby uzyskać dostęp do pliku, musisz połączyć się z instancją kontenera.
+
+* **Dyski do przechowywania kontenerów są mniej wydajne** Kontenery implementują sterownik magazynu, aby umożliwić aplikacjom zapisywanie danych. Ten sterownik wprowadza dodatkową abstrakcję do komunikacji z jądrem systemu operacyjnego hosta i jest mniej wydajny niż bezpośredni zapis do systemu plików hosta.
+
+Kontenery mogą korzystać z dwóch opcji utrwalania danych. Pierwsza opcja to **użycie woluminów**, a druga to **montowanie powiązań**.
+
+
+#### Co to jest wolumin (volume)?
+***
+
+`Volume` jest przechowywany w systemie plików hosta w określonej lokalizacji folderu. Wybierz folder, w którym wiesz, że dane nie będą modyfikowane przez procesy inne niż Docker.
+
+Docker tworzy nowy wolumin i zarządza nim, uruchamiając `docker volume create` polecenie. To polecenie może stanowić część naszej `definicji Docker file`, co oznacza, że możesz tworzyć woluminy w ramach procesu tworzenia kontenera. Docker utworzy `Volume`, jeśli nie istnieje, gdy spróbujesz zamontować go w kontenerze po raz pierwszy.
+
+`Volume` są przechowywane w katalogach w systemie plików hosta. Docker zamontuje woluminy w kontenerze i będzie nimi zarządzać. Po zamontowaniu te woluminy są izolowane od komputera hosta.
+
+Wiele kontenerów może jednocześnie używać tych samych `Volume`. Nie są one usuwane automatycznie, gdy kontener przestaje ich używać.
+
+W tym przykładzie możesz utworzyć katalog na naszym hoście kontenera i zamontować ten wolumin w kontenerze podczas tworzenia kontenera portalu śledzenia. Gdy Twój portal śledzenia rejestruje dane, możesz uzyskać dostęp do tych informacji za pośrednictwem systemu plików hosta kontenera. **Będziesz mieć dostęp do tego pliku dziennika nawet po usunięciu kontenera**.
+
+#### Co to jest mocowanie wiążące (bind mount)?
+***
+Montowanie powiązania jest koncepcyjnie takie samo jak volume, jednak zamiast używać określonego folderu, można zamontować dowolny `plik` lub `folder` na hoście. Oczekujesz również, że host może zmienić zawartość tych montowań. Podobnie jak volume, montowanie powiązania jest tworzone, jeśli je zamontujesz i nie istnieje jeszcze na hoście.
+
+Montowania powiązań mają ograniczoną funkcjonalność w porównaniu z woluminami i chociaż są bardziej wydajne, zależą od tego, czy host ma określoną strukturę folderów.
+
+**Wolumeny są uważane za preferowaną strategię przechowywania danych w kontenerach.**
+
+
+### Konfiguracja sieci kontenerów Dockera
+***
+
+Domyślna konfiguracja sieci Docker pozwala na izolację kontenerów na hoście Docker. Ta funkcja umożliwia tworzenie i konfigurowanie aplikacji, które mogą bezpiecznie komunikować się ze sobą.
+
+Docker zapewnia trzy wstępnie skonfigurowane konfiguracje sieci:
+
+* Bridge
+* Host
+* none
+
+Ty wybierasz, którą z tych konfiguracji sieci chcesz zastosować w swoim kontenerze, w zależności od jego wymagań sieciowych.
+
+`Bridge` to domyślna konfiguracja stosowana do kontenerów po uruchomieniu bez określania żadnej innej konfiguracji sieci. Ta sieć jest wewnętrzną, prywatną siecią używaną przez kontener i **izoluje sieć kontenera od sieci hosta Dockera**.
+
+Każdy kontener w sieci pomostowej ma przypisany `adres IP` i `maskę podsieci`, a nazwa hosta jest domyślną nazwą kontenera. Kontenery połączone z domyślną siecią `Bridge` mogą uzyskiwać dostęp do innych kontenerów połączonych mostem za pomocą adresu IP. Sieć `Bridge` nie zezwala na komunikację między kontenerami przy użyciu nazw hostów.
+
+Domyślnie Docker nie publikuje żadnych portów kontenerów. Aby włączyć mapowanie portów między portami kontenera a portami hosta platformy Docker, użyj flagi portu Docker `--publish`.
+
+Flaga publikowania skutecznie konfiguruje regułę zapory, która odwzorowuje porty.
+
+W tym przykładzie Twój portal śledzenia jest dostępny dla klientów przeglądających port 80. Będziesz musiał zamapować port 80 z kontenera na dostępny port na hoście. Masz otwarty port 8080 na hoście, co umożliwia ustawienie flagi w ten sposób.
+
+```{Bash}
+--publish 8080:80
+```
+
+Każdy klient przeglądający adres IP hosta platformy Docker i port 8080 może uzyskać dostęp do portalu śledzenia.
+
+`Sieć Host` - Sieć hosta umożliwia bezpośrednie uruchomienie kontenera w sieci hosta. Ta konfiguracja skutecznie usuwa izolację między hostem a kontenerem na poziomie sieci.
+
+W tym przykładzie załóżmy, że zdecydujesz się zmienić konfigurację sieci na opcję sieci hosta. Twój portal śledzenia jest nadal dostępny przy użyciu adresu IP hosta. Możesz teraz używać dobrze znanego portu 80 zamiast zmapowanego portu.
+
+Pamiętaj, że kontener może używać tylko portów, które nie są jeszcze używane przez hosta.
+
+`Sieć None` - Aby wyłączyć sieć dla kontenerów, użyj opcji braku sieci.
+
+### Uwagi dotyczące systemu operacyjnego
+***
+Należy pamiętać, że istnieją różnice między komputerowymi systemami operacyjnymi w zakresie opcji konfiguracji sieci Docker. Na przykład interfejs sieciowy Docker `0` nie jest dostępny w systemie macOS podczas korzystania z sieci `bridge`, a korzystanie z konfiguracji sieci `hosta` nie jest obsługiwane zarówno w przypadku komputerów stacjonarnych z systemem Windows, jak i macOS.
+
+Różnice te mogą mieć wpływ na sposób, w jaki programiści konfigurują swój przepływ pracy w celu zarządzania opracowywaniem kontenerów.
+
+## Kiedy używać kontenerów Docker
+
+Jak widzieliśmy, Docker ma kilka funkcji, z których możemy korzystać. Tutaj przyjrzymy się korzyściom, jakie Docker zapewnia naszym zespołom programistycznym i operacyjnym. Przyjrzymy się również kilku scenariuszom, w których Docker może nie być najlepszym wyborem.
+
+Te aspekty pomogą Ci zdecydować, czy Docker dobrze pasuje do Twojej strategii konteneryzacji.
+
+Przypomnijmy, że nasz zespół musiał stawić czoła wielu wyzwaniom podczas opracowywania i publikowania naszego portalu śledzenia zamówień. Szukali rozwiązania:
+
+* Z łatwością zarządzaj naszymi środowiskami hostingowymi
+* Zagwarantuj ciągłość w sposobie dostarczania naszego oprogramowania
+* Upewnij się, że efektywnie wykorzystujemy sprzęt serwerowy
+* Pozwól na przenośność naszych aplikacji
+
+Rozwiązaniem tych wyzwań jest Docker.  Rzućmy okiem na wszystkie korzyści, które omówiliśmy do tej pory.
+
+* **Oszczędzanie zasobów** Kontenery działają bez użycia maszyny wirtualnej (VM). W porównaniu z maszyną wirtualną widzimy, że maszyna wirtualna wymaga zainstalowanego systemu operacyjnego, ktry pochłąnia wiele zasobów.
+
+* **Izolacja** Kontenery Docker zapewniają funkcje bezpieczeństwa umożliwiające jednoczesne uruchamianie wielu kontenerów na tym samym hoście bez wzajemnego wpływu. Jak widzieliśmy, możemy skonfigurować zarówno przechowywanie danych, jak i konfigurację sieci, aby odizolować nasze kontenery lub udostępniać dane i łączność między określonymi kontenerami.
+
+* **Przenoszenie** Kontenery działają prawie wszędzie, na komputerach stacjonarnych, serwerach fizycznych, maszynach wirtualnych iw chmurze. Ta kompatybilność środowiska wykonawczego ułatwia przenoszenie kontenerowych aplikacji między różnymi środowiskami.
+
+
+* **Dostawa aplikacji** Dzięki Dockerowi kontener staje się jednostką, której używamy do dystrybucji aplikacji. Ta koncepcja gwarantuje, że dysponujemy ustandaryzowanym formatem kontenera, z którego korzystają zarówno programiści, jak i zespoły operacyjne.
+
+* **Zarządzanie środowiskami hostingowymi** Konfigurujemy środowisko naszej aplikacji wewnętrznie do kontenera. To zabezpieczenie zapewnia naszemu zespołowi operacyjnemu elastyczność w znacznie bliższym zarządzaniu środowiskiem aplikacji. Nasz zespół może monitorować aktualizacje systemu operacyjnego i jednorazowo stosować poprawki zabezpieczeń, a następnie wdrażać zaktualizowany kontener w razie potrzeby.
+
+* **Wdrożenia w chmurze** Kontenery platformy Docker są domyślną architekturą kontenerów używaną w usługach konteneryzacji platformy Azure i są obsługiwane na wielu innych platformach w chmurze. 
+
+:::{.callout-important appearance="simple"}
+
+[Creating a Docker container action - GitHub](https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action)
+
+[Docker Hub](https://hub.docker.com/)
+:::
+
+
+## Kiedy nie używać kontenerów
+
+* **Bezpieczeństwo i wirtualizacja:** Kontenery zapewniają pewien poziom izolacji. Jednak kontenery współużytkują jedno jądro systemu operacyjnego hosta, które może stanowić pojedynczy punkt ataku.
+
+* **Monitorowanie usług:** Zarządzanie aplikacjami i kontenerami jest bardziej skomplikowane niż w przypadku tradycyjnych wdrożeń maszyn wirtualnych. Istnieją funkcje rejestrowania, które informują nas o stanie uruchomionych kontenerów. Jednak bardziej szczegółowe informacje o usługach wewnątrz kontenera są trudniejsze do monitorowania.
+
+## Co dalej:
+
+Zainstaluj docker na komputerze z strony [docker](https://www.docker.com/).  Jelsi masz system windows instalacja odesle cie do odpowiedniej instrukcji instalacji WSL. Nastepnie poprosi o instalację linuxa. Zalecam ububtu wersja 22. Możesz opcjonalnie skorzystać z tej [instrukcji instalacji doker](https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-containers#install-docker-desktop)
+
+Nastepnie przejdź do mojego kursu dotyczącego zakładania kontenerow w VS code.  
+
+::: {.callout-important appearance="simple"}
+Jesli chesz wykorzystywac kontenery do wdrazania palikacji AI, które wykonują obliczenia na procesorach GPU - to warto zapozanć się z tą konfiguracją w odpowienim czasie. 
+
+* [Get started with GPU acceleration for ML in WSL](https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-containers#install-docker-desktop)
+
+Jest tam kilka innych ciekawych pozycji:
+
+* [Get started with databases on Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-database)
+
+
+* [https://learn.microsoft.com/en-us/windows/wsl/tutorials/linux](https://learn.microsoft.com/en-us/windows/wsl/tutorials/linux)
+:::
+
+## Stosowanie docker - poradniki
+
+1) [Strona docker](https://www.docker.com/)
+2) [Dokumentacja Docker](https://docs.docker.com/)
+3) [VS Code for Docker](https://code.visualstudio.com/docs/containers/overview)
+4) [Docker for data scientists - Blog Python and R - Ander Fernández Jauregui](https://anderfernandez.com/en/blog/docker-tutorial-for-data-science/)
+5) [Docker for data scientists - part 1](https://towardsdatascience.com/docker-for-data-scientists-part-1-41b0725d4a50)
+6) [Docker for data scientists - part 2](https://towardsdatascience.com/docker-for-data-scientists-part-2-7655c02fe975)
+7) [Posit-soluction docker for R](https://solutions.posit.co/envs-pkgs/environments/docker/)
+8) [Docker for R Users](https://colinfay.me/docker-r-reproducibility/)
+
