@@ -1,0 +1,58 @@
+---
+title: "Git"
+subtitle: "R i Git w Visual Studio Code"
+author: Mateusz Rzeszutek
+date: today 
+format: 
+  html:
+    toc: true
+    toc-depth: 4
+    toc-location: right
+    toc-title: Spis Treści
+    number-sections: true
+    embed-resources: true
+    html-math-method: katex
+    code-tools: true
+    code-block-bg: true
+    code-block-border-left: "#141A90"
+    code-fold: show
+    code-summary: "Show and hide code"
+    link-external-icon: true
+    link-external-newwindow: true
+    smooth-scroll: true
+    theme: 
+        light: flatly
+        dark: solar
+    fontsize: 1.0em
+    linestretch: 1.5
+execute: 
+  echo: true
+  error: false
+  warning: false
+  output: true
+--- 
+
+<style type="text/css"> body {text-align: justify}  </style>
+***
+
+
+## Pakiety {.unnumbered .unlisted}
+
+```{r}
+#| include: false
+library(tidyverse)
+```
+
+## Wprowadzenie
+
+```{r}
+#| tbl-cap: "Tab. 1 Fisrt Table"
+
+mtcars[1:4,1:4] %>% 
+    knitr::kable(digits = 2)
+```
+
+## Jak stosować GIT
+
+
+
