@@ -10,4 +10,4 @@ The repository is used to store materials for students developed in [VS Code](ht
 2) Github in VS Code [GitHub_vs_code](https://github.com/mrzeszut/vs_git/blob/master/GitHub_vs_code.qmd)
 3) Git in VS Code [Git_vs_code.qmd](https://github.com/mrzeszut/vs_git/blob/master/Git_vs_code.qmd)
 4) Introduction to Doker [Docker_intro.qmd](https://github.com/mrzeszut/vs_git/blob/master/Docker_intro.qmd)
-5) ...
+5) Docker VS Code
