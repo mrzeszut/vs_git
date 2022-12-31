@@ -22,7 +22,6 @@ format:
     smooth-scroll: true
     self-contained: true
     citation: true
-    bibliography: D:\\Qnap\\dydaktyka\\1_dzienne\\Kurs_R_SPD\\Temat_1_konf\\moja_bib.bib
     theme: 
         dark: solar
         light: flatly
