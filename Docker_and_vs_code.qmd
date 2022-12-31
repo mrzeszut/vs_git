@@ -1,0 +1,242 @@
+---
+title: "Kontenera Docker jako środowiska programistycznego Visual Studio Code"
+author: Mateusz Rzeszutek
+date: today 
+format: 
+  html:
+    toc: true
+    toc-depth: 4
+    toc-location: right
+    toc-title: Spis Treści
+    number-sections: true
+    number-depth: 4
+    embed-resources: true
+    html-math-method: katex
+    code-tools: true
+    code-block-bg: true
+    code-block-border-left: "blue"
+    code-fold: show
+    code-summary: "Show and hide code"
+    link-external-icon: true
+    link-external-newwindow: true
+    smooth-scroll: true
+    self-contained: true
+    citation: true
+    theme: 
+        dark: solar
+        light: flatly
+    fontsize: 1.0em
+    linestretch: 1.3
+    fig-align: center
+execute: 
+  echo: true
+  error: false
+  warning: false
+  output: true
+--- 
+
+<style type="text/css"> body {text-align: justify}  </style>
+
+## Wprowadzenie
+
+Możesz użyć rozszerzenia **Dev Containers** dla Visual Studio Code, aby opracować wewnątrz kontenera platformy Docker.
+
+Załóżmy, że pracujesz w agencji, która zajmuje się doradztwem w zakresie oprogramowania w wielu różnych językach i środowiskach wykonawczych. Wszyscy programiści używają Visual Studio Code. Agencja ma w toku dziesiątki projektów, z których każdy ma własne wymagania dotyczące konfiguracji i czasu działania. Deweloperzy w Twojej agencji muszą pracować nad dowolnym projektem bez konieczności wcześniejszego konfigurowania swoich maszyn.
+
+W tym module dodasz pliki konfiguracyjne do istniejącego projektu. Te pliki powiedzą Visual Studio Code, jak zbudować środowisko, w którym projekt będzie „po prostu działał”. Do skonfigurowania środowiska wykonawczego użyjesz konfiguracji Dev Container. Zautomatyzujesz także konfigurację środowiska programistycznego, które będzie działać dla każdego, kto ma Docker i Visual Studio Code.
+
+Pod koniec tego modułu będziesz w stanie skonfigurować dowolny projekt tak, aby działał w kontenerze Docker.
+
+## Ćwiczenie - przygotowanie projektu
+
+
+### Kolonowanie testowego repozytorium
+***
+1) Upewnij się, że Docker Desktop jest zainstalowany i działa na twoim komputerze.
+2) Skopiuj adres URL przykładowego repozytorium do schowka.
+
+::: {.callout appearance="minimal"}
+https://github.com/MicrosoftDocs/mslearn-python-products
+:::
+
+3) Upewnij się, że Docker Desktop jest zainstalowany i działa na twoim komputerze.
+4) kliknij `F1`, otworzy paletę poleceń i wyszukać `Git: Clone`
+5) Wklej adres URL ze schowka.
+6) Wybierz lokalizację na dysku, do której można sklonować projekt.
+7) Wybierz Otwórz z powiadomienia w Visual Studio Code.
+8) Jeśli zobaczysz wyskakujące okienko z pytaniem, czy ufasz autorom, wybierz „Tak, ufam autorom”.
+9) Projekt powinien być teraz otwarty w Visual Studio Code.
+
+
+### instalacja rozszerzenia 
+***
+1) Wybierz ikonę „Rozszerzenia” na pasku aktywności, aby otworzyć widok Rozszerzenia.
+2) Znajdź rozszerzenie `Dev Containers` i wybierz przycisk Instaluj.
+
+
+## Użyj rozszerzenia Dev Containers w programie Visual Studio Code
+
+Po zainstalowaniu rozszerzenia Dev Containers przyjrzyjmy się, jak pomoże ono programistom w Twojej agencji. Jak zauważyłeś podczas pracy w agencji, rozpoczęcie nowych projektów może być dla programistów dużym problemem. Każdy z nich wymaga od programistów zainstalowania i zarządzania określonymi lub skomplikowanymi zestawami zależności i stosów technologii.
+
+W idealnej sytuacji każdy projekt jest zawarty we własnym, wstępnie skonfigurowanym, skonteneryzowanym środowisku. `Docker` i `Visual Studio Code` umożliwiają tworzenie kontenerów dzięki rozszerzeniu `Dev Containers`.
+
+
+### Rozszerzenie Dev Containers
+***
+Rozszerzenie `Dev Containers` dla programu Visual Studio Code umożliwia używanie kontenera platformy Docker jako w pełni funkcjonalnego środowiska programistycznego. Możesz użyć tego rozszerzenia, aby otworzyć dowolny folder lub repozytorium w kontenerze i skorzystać z pełnego zestawu funkcji Visual Studio Code, takich jak IntelliSense (uzupełnienia), nawigacja po kodzie i debugowanie.
+
+
+### Jak Działa rozszerzenia 
+***
+Rozszerzenie Dev Containers umożliwia pobranie kontenera deweloperskiego z określonym stosem technologii lub już skonfigurowanymi zależnościami, otwarcie projektu i stwierdzenie, że Twój kod po prostu działa bez pobierania czegokolwiek na lokalną maszynę. Dev Containers działa poprzez połączenie Visual Studio Code z działającym kontenerem. Pliki obszaru roboczego są instalowane z lokalnego systemu plików lub są kopiowane lub klonowane do kontenera.
+
+Rozszerzenia programu Visual Studio Code są instalowane i uruchamiane w kontenerze. Tam mają pełny dostęp do narzędzi, platformy i systemu plików. Dla Ciebie, dewelopera, środowisko jest takie samo, jak gdybyś normalnie otworzył projekt w Visual Studio Code.
+
+Możesz bezproblemowo przełączać całe środowisko programistyczne, po prostu łącząc się z innym kontenerem. Rozszerzenie obsługuje całą konfigurację w oparciu o kilka plików konfiguracyjnych zawartych w folderze o nazwie **`.devcontainer`** .
+
+![](fig/vc_docker_1.png)
+
+
+## Ćwiczenie - dodanie kontenera devop do istniejącego projektu
+
+Podczas konfigurowania kontenera dla projektu musisz najpierw dodać konfigurację kontenera do tego projektu. Konfiguracja kontenera konfiguruje środowisko w Visual Studio Code.
+
+W tym ćwiczeniu dodasz kontener deweloperski i otworzysz w nim projekt Pulpit nawigacyjny produktów.
+
+
+### Dodanie kontenera 
+***
+
+1) Wróć do programu VS Code i sklonowanego wcześniej projektu
+2) Naciśnij `F1`, aby otworzyć Paletę poleceń.
+3) Wpisz `Add Dev Container` i wybierz `Dev Containers:` `Add` `Development` `Container` `Configuration` `Files`.
+4) Wybierz następujące opcje:
+
+| param                                        | Value       |
+|:---------------------------------------------|:------------|
+| Select a container configuration definition  | Python 3    |
+| Python version                               | 3.10        |
+| Install Node.js                              | none        |
+| Add Features                                 | select "OK" |
+
+Konfiguracja Dev Container zostanie dodana do Twojego projektu. Visual Studio Code powiadomi Cię, że możesz teraz otworzyć projekt w kontenerze. **Na razie odrzuć to powiadomienie.**
+
+
+### Sprawdź pliki konfiguracyjne
+***
+
+* Zauważ, że do projektu został dodany nowy folder o nazwie „.devcontainer” .
+* Rozwiń ten folder i zauważ, że zawiera zarówno plik `Dockerfile`, jak i plik `devcontainer.json`.
+
+### Otwórz projekt w kontenerze
+***
+1) Naciśnij 1, aby otworzyć Paletę poleceń.
+2) Wpisz `reopen in container`.
+3) Wybierz `Dev Containers:` `Reopen in Container` z listy dostępnych opcji.
+
+Rozpocznie się budowanie kontenera. Początkowa kompilacja może zająć kilka minut, ponieważ nowy obraz musi zostać ściągnięty i zbudowany na twoim komputerze. Po zbudowaniu kontenera po raz pierwszy późniejsze kompilacje będą znacznie szybsze.
+
+### Wyświetl zdalny wskaźnik
+***
+
+Po zakończeniu budowy kontenera możesz sprawdzić, czy masz połączenie z kontenerem, sprawdzając zdalny wskaźnik. Powinieneś także teraz zobaczyć pliki projektu załadowane w VS Code.
+
+* Sprawdź zdalny wskaźnik, wyświetlając lewy dolny róg VS Code. Zauważ, że teraz jest napisane „Dev Container: Python 3”.
+
+![](fig/vs_docker_2.png)
+
+:::{.callout-important appearance="simple"}
+Możesz zobaczyć powiadomienia o `Pylance` lub poprawie wydajności w systemie Windows. Możesz bezpiecznie odrzucić wszystkie powiadomienia widoczne w programie `VS Code`. Nie będziesz musiał robić tych rzeczy.
+:::
+
+### Sprawdźć kontener
+***
+1. Naciśnij `Ctrl+ `, aby otworzyć zintegrowany terminal w Visual Studio Code, jeśli nie jest jeszcze otwarty.
+2. Zwróć uwagę, że monit terminala może wyglądać inaczej niż normalny monit terminala.
+
+![](fig/vs_docker_3.png)
+
+3. Uruchom następujące polecenie, aby upewnić się, że Python jest zainstalowany (Dane wyjściowe terminala powinny być wersją Pythona używaną w kontenerze.):
+
+::: {.callout appearance="minimal"}
+python --version
+:::
+
+4. Uruchom następującą komendę w terminalu, aby zainstalować zależności Flask potrzebne do uruchomienia projektu:
+
+::: {.callout appearance="minimal"}
+pip3 install --user -r requirements.txt
+:::
+
+5. Wpisz następującą komendę w terminalu, aby rozpocząć projekt:
+
+::: {.callout appearance="minimal"}
+python app.py
+:::
+
+Otwórz projekt w przeglądarce, przechodząc do http://127.0.0.1:5000 .
+
+![](fig/vs_docker_4.jpg)
+
+Świetna robota! Masz aplikację internetową w Pythonie z [Flask](https://flask.palletsprojects.com/en/2.2.x/) działającą na twoim komputerze i możesz nawet nie wiedzieć, czym są te rzeczy. W porządku! nie musisz. Kontener zajmuje się konfiguracją całego środowiska.
+
+W następnej sekcji dowiesz się, jak używać pliku `devcontainer.json` do automatyzacji instalacji zależności i dostosowywania VS Code dla tego projektu w języku Python.
+
+
+## Dostosuj ustawienia projektu i edytora
+
+Skonfigurowałeś kontener deweloperski dla jednego z projektów Twojej agencji. Będzie teraz *"po prostu działać"* dla każdego, kto ma rozszerzenie Docker i Dev Containers. Nadal będą musieli zainstalować zależności. Mogą również potrzebować niektórych rozszerzeń Visual Studio Code, o których nie wiedzą. Na szczęście możesz w pełni dostosować i zautomatyzować całą konfigurację projektu, używając pliku `devcontainer.json.`
+
+## Bliższe spojrzenie na devcontainer.json
+
+Przyjrzyjmy się głównym opcjom w pliku `.devcontainer/devcontainer.json` z projektu Products Dashboard. Spojrzenie na wszystko na raz jest trochę długie, więc spójrzmy na to w sekcjach.
+
+
+### Zbuduj konfigurację
+***
+Sekcja `build` określa sposób utworzenia kontenera. Rozpoznasz plik Dockerfile jako inny plik w folderze „.devcontainer”.
+***
+```{json}
+"build": {
+    "dockerfile": "Dockerfile",
+    ...
+},
+```
+***
+
+### Ustawienia
+***
+Ta `settings` opcja kopiuje ustawienia specyficzne dla maszyny do kontenera. Możesz mieć te ustawienia we własnej konfiguracji Visual Studio Code. Dodając je do `settings`, zapewniasz, że każdy, kto otworzy ten projekt, otrzyma te określone ustawienia VS Code.
+
+W tym kontenerze języka Python, te ustawienia zapewniają użytkownikowi ulepszone możliwości edytowania w języku Python.
+
+### Ustawienia projektu
+***
+
+Ostatnia sekcja pliku dotyczy bezpośrednio konfiguracji projektu. 
+
+```{json}
+// Dodaj IDs rozszerzeń, które chcesz zainstalować podczas tworzenia kontenera.
+"extensions": [
+    "ms-python.python",
+    ...
+],
+
+// Użyj „postCreateCommand”, aby uruchamiać polecenia po utworzeniu kontenera.
+// "postCreateCommand": "pip3 install --user -r requirements.txt",
+```
+
+Możesz użyć `extensions` tablicy, aby określić, które rozszerzenia Visual Studio Code powinny zostać zainstalowane w Visual Studio Code podczas łączenia się z kontenerem. Twoja normalna konfiguracja Visual Studio Code i wszystkie rozszerzenia, które już masz, nie będą obecne, gdy używasz kontenerów deweloperskich. Rozszerzenia są tutaj określone wraz z ich identyfikatorem.
+
+Ta `postCreateCommand` opcja umożliwia uruchamianie dowolnych poleceń po utworzeniu kontenera. Jeśli pamiętasz z pierwszego ćwiczenia, musiałeś uruchomić `pip3` polecenie, aby zainstalować zależności. Ale skąd miałbyś wiedzieć, żeby to zrobić? Nie powinieneś. Tutaj możesz to skonfigurować tak, aby działo się to automatycznie, a inni nie musieli się tym martwić.
+
+***
+
+W następnym ćwiczeniu zmodyfikujesz plik `devcontainer.json`, aby zautomatyzować kilka aspektów projektu, które umożliwią innym programistom osiągnięcie natychmiastowego sukcesu.
+
+## Ćwiczenie — Dostosuj ustawienia projektu i edytora
+
+Plik `devcontainer.json` ułatwia konfigurowanie różnych ustawień w skonteneryzowanej konfiguracji programu Visual Studio Code. **Do tej pory skonfigurowałeś kontener deweloperski dla projektu w języku Python**. Jednak nadal istnieją pewne ostre krawędzie i zadania konfiguracyjne, które można dodatkowo zautomatyzować.
+
+W tym ćwiczeniu użyjesz pliku `devcontainer.json`, aby wygładzić te krawędzie i sprawić, by projekt działał bez żadnych kroków konfiguracyjnych ze strony dewelopera.
+

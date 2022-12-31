@@ -22,7 +22,6 @@ format:
     smooth-scroll: true
     self-contained: true
     citation: true
-    bibliography: D:\\Qnap\\dydaktyka\\1_dzienne\\Kurs_R_SPD\\Temat_1_konf\\moja_bib.bib
     theme: 
         dark: solar
         light: flatly
@@ -238,7 +237,7 @@ Usługi do uwidocznienia, takie jak konfiguracja magazynu i sieci
 
 Zamapujmy te aspekty na przykładowy plik Dockerfile. Załóżmy, że tworzymy obraz platformy Docker dla witryny internetowej platformy ASP.NET Core. Plik Dockerfile może wyglądać podobnie jak w poniższym przykładzie.
 
-```{Bash}
+````
 # Step 1: Specify the parent image for the new image
 FROM ubuntu:18.04
 
@@ -267,7 +266,7 @@ EXPOSE 80:8080
 
 # STEP 8: Define the entry point of the process that runs in the container
 ENTRYPOINT ["dotnet", "website.dll"]
-```
+````
 
 Nie będziemy tutaj omawiać specyfikacji pliku Dockerfile ani szczegółów każdego polecenia w powyższym przykładzie. Zauważ jednak, że w tym pliku jest kilka poleceń, które pozwalają nam manipulować strukturą obrazu.
 
@@ -292,9 +291,9 @@ Nie będziemy tutaj omawiać wszystkich poleceń klienckich i flag poleceń, ale
 Używamy `docker build` polecenia do budowania obrazów Dockera. Załóżmy, że używamy wcześniejszej definicji Dockerfile do zbudowania obrazu. Oto przykład pokazujący polecenie kompilacji.
 
 
-```{Bash}
+:::{.callout appearance="minimal"}
 docker build -t temp-ubuntu .
-```
+:::
 
 Nie martw się, jeśli nie rozumiesz powyższego wyniku. Zwróć jednak uwagę na kroki wymienione w danych wyjściowych. Po wykonaniu każdego kroku do tworzonego obrazu dodawana jest nowa warstwa.
 
@@ -312,12 +311,12 @@ Do jednego obrazu można przypisać wiele tagów. Zgodnie z konwencją, najnowsz
 ***
 Oprogramowanie Docker automatycznie konfiguruje lokalny rejestr obrazów na twoim komputerze. Możesz przeglądać obrazy w tym rejestrze za pomocą `docker images` polecenia w konsoli. Dane wyjściowe wyglądają jak w poniższym przykładzie.
 
-```{Bash}
+````
 REPOSITORY          TAG                     IMAGE ID            CREATED                     SIZE
 tmp-ubuntu          latest             f89469694960        14 minutes ago         1.69GB
 tmp-ubuntu          version-1.0        f89469694960        14 minutes ago         1.69GB
 ubuntu              18.04              a2a15febcdf3        5 weeks ago            64.2MB
-```
+````
 
 Zwróć uwagę, jak obraz jest wyświetlany wraz z nazwą, znacznikiem i identyfikatorem obrazu. Przypomnij sobie, że do obrazu możemy zastosować wiele etykiet. Oto taki przykład. Chociaż nazwy obrazów są różne, widzimy, że identyfikatory są takie same.
 
@@ -328,9 +327,9 @@ Identyfikator obrazu to przydatny sposób identyfikowania obrazów i zarządzani
 ***
 Możesz usunąć obraz z lokalnego rejestru platformy Docker za pomocą `docker rmi` polecenia. Określ nazwę lub identyfikator obrazu do usunięcia. Ten przykład usuwa obraz dla przykładowej aplikacji internetowej przy użyciu nazwy obrazu:
 
-```{Bash}
+:::{.callout appearance="minimal"}
 docker rmi temp-ubuntu:version-1.0
-```
+:::
 
 Nie możesz usunąć obrazu, jeśli jest on nadal używany przez kontener. Polecenie `docker rmi` zwraca komunikat o błędzie, który zawiera listę kontenerów opartych na obrazie.
 
@@ -369,17 +368,17 @@ Na koniec, aby usunąć kontenery, które są w stanie zatrzymania, użyj polece
 ***
 Aby wyświetlić listę uruchomionych kontenerów, uruchom `docker ps` polecenie. Aby zobaczyć wszystkie kontenery we wszystkich stanach, przekaż `-a` argument.
 
-```{Bash}
+:::{.callout appearance="minimal"}
 docker ps -a
-```
+:::
 
 Wynik
 
-```{Bash}
+````
 CONTAINER ID    IMAGE        COMMAND         CREATED       STATUS           PORTS        NAMES
 d93d40cc1ce9    tmp-ubuntu:latest  "dotnet website.dll …"  6 seconds ago    Up 5 seconds        8080/tcp      happy_wilbur
 33a6cf71f7c1    tmp-ubuntu:latest  "dotnet website.dll …"  2 hours ago     Exited (0) 9 seconds ago            adoring_borg
-```
+````
 
 Istnieją trzy elementy do przejrzenia w poprzednim wyniku:
 
@@ -399,39 +398,39 @@ Ta funkcja umożliwia uruchamianie wielu wystąpień kontenerów tego samego obr
 
 Jak uruchomić kontener ?
 
-```{Bash}
+:::{.callout appearance="minimal"}
 docker run -d tmp-ubuntu
-```
+:::
 
 W tym momencie kontener jest dostępny do zarządzania. Teraz sprawdźć nazwy. Skorzystamy z tych z powyzszego przykładu:
 
-```{Bash}
+:::{.callout appearance="minimal"}
 docker ps -a
-```
+:::
 
 Wstrzymać kontener:
 
-```{Bash}
+:::{.callout appearance="minimal"}
 docker pause happy_wilbur
-```
+:::
 
 Polecenie `docker unpause` wznawia wszystkie procesy w określonych kontenerach. Ponowne uruchomienie kontenera:
 
-```{Bash}
+:::{.callout appearance="minimal"}
 docker restart happy_wilbur
-```
+:::
 
 Jeśli uruchomiony to zatrzymuje i otwiera nowy. Jesli nie może zatrzymać procesu to wykonuje `kill`. Aby zatrzymać uruchomiony kontener:
 
-```{Bash}
+:::{.callout appearance="minimal"}
 docker stop happy_wilbur
-```
+:::
 
 Usuwanie kontenara to:
 
-```{Bash}
+:::{.callout appearance="minimal"}
 docker rm happy_wilbur
-```
+:::
 
 
 ### Konfiguracja magazynu kontenera Docker
@@ -497,9 +496,9 @@ Flaga publikowania skutecznie konfiguruje regułę zapory, która odwzorowuje po
 
 W tym przykładzie Twój portal śledzenia jest dostępny dla klientów przeglądających port 80. Będziesz musiał zamapować port 80 z kontenera na dostępny port na hoście. Masz otwarty port 8080 na hoście, co umożliwia ustawienie flagi w ten sposób.
 
-```{Bash}
+:::{.callout appearance="minimal"}
 --publish 8080:80
-```
+:::
 
 Każdy klient przeglądający adres IP hosta platformy Docker i port 8080 może uzyskać dostęp do portalu śledzenia.
 
