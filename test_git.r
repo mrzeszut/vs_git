@@ -1,29 +1,30 @@
+# Instaluj pakiety -------------------------------
+
+installed.packages("tidymodels")
+install.packages("openair")
+installed.packages(broom.mixed)
+
+# wczytaj pakiety ----
 
 library(tidyverse)
+library(tidymodels)
+library(readr)
+library(dotwhisker)
 
-mtcars %>% 
+## Test ----
+
+mtcars %>%
     ggplot(aes(disp, mpg)) +
     geom_point() +
     geom_smooth() +
     theme_bw() +
-    scale_x_continuous(expand = c(0,0)) +
-    scale_y_continuous(expand = c(0,0)) 
-     
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0))
 
+ip <- as.data.frame(installed.packages()[, c(1, 3:4)])
 
-pk
+library(openair)
 
-library()
+timeVariation(mydata = mydata)
 
-installed.packages("tidymodels")
-library(tidymodels)
-
-ip = as.data.frame(installed.packages()[,c(1,3:4)])
-
-
-library(tidymodels)  # for the parsnip package, along with the rest of tidymodels
-
-# Helper packages
-library(readr)       # for importing data
-installed.packages(broom.mixed) # for converting bayesian models to tidy tibbles
-library(dotwhisker)  # 
+mydata <- mydata
