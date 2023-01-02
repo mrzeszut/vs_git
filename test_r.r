@@ -1,18 +1,24 @@
 # Instaluj pakiety -------------------------------
 
+install.packages("languageserver")
 installed.packages("tidymodels")
 install.packages("openair")
-installed.packages(broom.mixed)
+installed.packages("broom.mixed)"
+
 
 # wczytaj pakiety ----
+
+?tidymodels
 
 library(tidyverse)
 library(tidymodels)
 library(readr)
-library(dotwhisker)
+library(openair)
+
 
 ## Test ----
 
+filter()
 mtcars %>%
     ggplot(aes(disp, mpg)) +
     geom_point() +
@@ -27,4 +33,4 @@ library(openair)
 
 timeVariation(mydata = mydata)
 
-mydata <- mydata
+
