@@ -1,0 +1,147 @@
+---
+title: "Konfiguracja IDE - start"
+author: " Mateusz Rzeszutek"
+author-meta: "A"
+date: today
+format: 
+  html:
+    code-fold: show
+    code-block-bg: true 
+    code-block-border-left: blue
+    code-tools: true
+    number-sections: true
+    number-depth: 6
+    toc: true
+    toc-depth: 3
+    toc-location: right
+    toc-title: Spis Treści
+    embed-resources: true
+    smooth-scroll: true
+    self-contained: true
+    anchor-sections: true
+    theme: 
+        light: flatly
+        dark: solar
+    fontsize: 1.0em
+    linestretch: 1.5
+execute: 
+  echo: true
+  error: false
+  warning: false
+  output: true
+---
+
+<style type="text/css"> body {text-align: justify}  </style>
+
+## Zainstaluj 
+
+1) [Github](https://github.com/) - utwórz konto
+2) [R](https://cran.r-project.org/bin/windows/base/) - zainstaluj
+3) [R tools](https://cran.r-project.org/bin/windows/Rtools/) - zainstaluj
+4) [Anaconda](https://www.anaconda.com/) - zainstaluj - python for data science
+5) [git](https://git-scm.com/) - zainstaluj oraz przedsatw się git:
+6) [Quarto](https://quarto.org/docs/get-started/) - pobierz wersje z 
+7) [VS Code](https://code.visualstudio.com/)
+
+***
+
+Po instalacji `git`: 
+
+W `konsoli` np. `powershell` wykonaj poniższe polecenia. Pamietaj by podać ten sam e-mail co w `github`. Zmiany wprowadzasz tylko pomiędzy `"..."`. 
+
+::: {.callout appearance="minimal"}
+git config --global user.name "FIRST_NAME LAST_NAME" \
+git config --global user.email "emial@example.com"
+:::
+
+***
+
+## Zainstaluj rozszerzenia w VS code
+
+:::{.callout-tip}
+Zanim zainstalujesz rozszerzenie dokłądnie przeczytaj co ono robi. Z reguły jest to opisane bardzo dobrze. 
+:::
+
+**python**
+
+ - [python](https://marketplace.visualstudio.com/items?itemName=ms-python.python),
+ - [Python extension for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=VisualStudioExptTeam.vscodeintellicode)
+  - [Python Extension Pack](https://marketplace.visualstudio.com/items?itemName=donjayamanne.python-extension-pack)
+  - [jupyter](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)
+  - [Python Preview](https://marketplace.visualstudio.com/items?itemName=dongli.python-preview)
+
+**R**
+
+  - [R Extension for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=REditorSupport.r)
+  - [R Debugger](https://marketplace.visualstudio.com/items?itemName=RDebugger.r-debugger)
+  - [Live Preview](https://marketplace.visualstudio.com/items?itemName=ms-vscode.live-server)
+
+**Uniwrsalne**
+
+  - [IntelliCode](https://marketplace.visualstudio.com/items?itemName=VisualStudioExptTeam.vscodeintellicode)
+  - [Quarto](https://marketplace.visualstudio.com/items?itemName=quarto.quarto)
+  - [GitHub Pull Requests and Issues](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github)
+  - [Git Graph](https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph)
+  - [GitLens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens)
+  - [R Markdown All in One](https://marketplace.visualstudio.com/items?itemName=TianyiShi.rmarkdown)
+  - [polish VS](https://marketplace.visualstudio.com/items?itemName=MS-CEINTL.vscode-language-pack-pl)
+  - [Error Lens](https://marketplace.visualstudio.com/items?itemName=usernamehw.errorlens)
+  - [Path Intellisense](https://marketplace.visualstudio.com/items?itemName=christian-kohler.path-intellisense)
+  - [Pylance](https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance)
+  - [Polyglot Notebook](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.dotnet-interactive-vscode)
+
+
+***
+
+
+## Dodatkowa niezbędna konfiguracja R
+
+:::{.callout-tip appearance="simple"}
+
+:::
+
+### Zainstaluj pakiety R za poziomu VS Code. 
+***
+
+
+```{r}
+#| eval: false
+install.packages("languageserver")
+install.packages("httpgd") 
+install.packages("lintr") 
+```
+
+::: {.callout-tip appearance="simple"}
+Jesli zainstalujesz `lintr` to bezwględnie dodaj dwa rozszerzenia VS code (Error Lens, Path Intellisense). Jeśli po tych zabiegach system podpowiedzi i korekty stylu kodu R w plikach `.r` będzie niesatysfakcjonujący to:
+
+W ustawieniach VS code `CTRL+,` wyszukaj `r.lsp.diagnostics` i ustaw na `false` (lub odznacz dziubek `✓`).
+
+Zanim jednak to zrobisz bądźć pewny, że rozumiesz co te narzędzia robią i jak ułątwiają pisanie kodu. Przeczytaj [dokumentację](https://github.com/REditorSupport/vscode-R/wiki/R-Language-Service
+), większość dokumentacji to kilkusekondowe piki video. 
+:::
+
+
+### Zainstaluj radian
+***
+W konsolii zainstaluj radian z poziomu terminala anaconda. Nacisnij `windows` i wpisz `anaconda` i wybierz terminal anacondy, który nazywa się `Anaconda Promt (anaconda)` - a nastepnie z prawej strony wybierz uruchom jako administrator. 
+
+:::{.callout appearance="minimal"}
+conda update anaconda \
+conda install -c conda-forge radian
+:::
+
+### Skróty klawiaturowe 
+***
+
+Ustaw w VS Code skróty klawiaturowe R studio zgodnie z [instrukcją](https://github.com/REditorSupport/vscode-R/wiki/Keyboard-shortcuts) - plik `keybindings.json` otworzysz w VS code - otwierając skróty kalawiaturowe z menu. Po otwarciu w górnym prawym rogu oknie skrótów klawiaturowych znajdziesz ikonę, która pozoli ci otworzyć pusty plik `json`. Wklei kod z linku do otwartego pliku `json`. **Sprawdź w skopiowanym kodzie komentarze i zmień kod tak by skróty działały też w dokumentach quarto**
+
+Jeśli auto poprawa składni R w plikach `.r` będzie irytująca to po instalacji w ustawieniach VS code `CTRL+,` wyszukaj `r.lsp.diagnostics` i ustaw na `false` (lub odznacz dziubek `✓`). 
+
+## Inne rozszerzenia VS code 
+
+[Inne py1](https://dev.to/wiseai/vs-code-extensions-for-python-developers-3n9b) 
+
+[Inne py2](https://bas.codes/posts/best-vscode-extensions-python)
+
+[Inne R](https://renkun.me/2022/03/06/my-recommendations-of-vs-code-extensions-for-r/)
+

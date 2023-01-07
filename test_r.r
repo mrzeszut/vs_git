@@ -8,13 +8,10 @@ installed.packages("broom.mixed)"
 
 # wczytaj pakiety ----
 
-?tidymodels
-
 library(tidyverse)
 library(tidymodels)
 library(readr)
 library(openair)
-
 
 ## Test ----
 
