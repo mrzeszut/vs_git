@@ -1,0 +1,614 @@
+---
+title: "Edytowanie kodu, gałęzie i scalanie w Git"
+author: Mateusz Rzeszutek
+date: today 
+format: 
+  html:
+    toc: true
+    toc-depth: 4
+    toc-location: right
+    toc-title: Spis Treści
+    number-sections: true
+    number-depth: 4
+    embed-resources: true
+    html-math-method: katex
+    code-tools: true
+    code-block-bg: true
+    code-block-border-left: blue
+    code-fold: show
+    code-summary: "Show and hide code"
+    link-external-icon: true
+    link-external-newwindow: true
+    smooth-scroll: true
+    self-contained: true
+    citation: true
+    theme: 
+        dark: solar
+        light: flatly
+    fontsize: 1.0em
+    linestretch: 1.3
+    fig-align: center
+execute: 
+  echo: true
+  error: false
+  warning: false
+  output: true
+---
+
+<style type="text/css"> body {text-align: justify}  </style>
+
+## Wprowadzenie
+
+W miarę postępu projektu chcesz ułatwić współpracę ze znajomymi, aby wszyscy mogli pracować nad funkcjami witryny bez konfliktów i marnowania wysiłku. W tym module dowiesz się, czym są gałęzie w Git, jak używać gałęzi do programowania i jak je scalać, w tym radzić sobie z konfliktami scalania.
+
+### Cele nauczania
+***
+* Dowiedz się, jak działają gałęzie w Git
+* Twórz nowe gałęzie i przełączaj się między nimi
+* Połącz gałęzie
+* Poznaj podstawowe techniki rozwiązywania konfliktów scalania
+
+
+## Gałęzie w Git
+
+W miarę postępu projektu zdajesz sobie sprawę, że chcesz, aby każdy mógł pracować nad więcej niż jednym zadaniem na raz, nie przeszkadzając w pracy innej osoby. Potrzebujesz sposobu na oddzielenie pracy wszystkich, tak aby nowy program nie przeszkadzał w usuwaniu istniejących błędów. W Git rozgałęzienia ułatwiają tego rodzaju współpracę.
+
+Praca wykonana na gałęzi `branch` nie musi być udostępniana i nie koliduje z pracą wykonywaną na innych gałęziach. Gałęzie pozwalają trzymać razem zatwierdzenia związane z każdym tematem i odizolować je od innych prac, dzięki czemu zmiany wprowadzone w temacie są łatwe do przeglądania i śledzenia.
+
+Tworzenie nowoczesnego oprogramowania odbywa się prawie wyłącznie w gałęziach. Celem jest utrzymanie czystości gałęzi głównej, dopóki praca nie będzie gotowa do zaewidencjonowania. Następnie przekazujesz zmiany do gałęzi głównej lub, jeszcze lepiej, przesyłasz żądanie ściągnięcia, aby scalić zmiany.
+
+Przewagą Git nad wcześniejszymi systemami kontroli wersji (VCS) jest to, że dzięki Git tworzenie gałęzi jest niezwykle szybkie; sprowadza się to do zapisania 40-znakowego skrótu do pliku pod rozszerzeniem .git/heads. Przełączanie gałęzi jest również szybkie, ponieważ Git przechowuje całe pliki i rozpakowuje je zamiast próbować odtworzyć je z list zmian. Scalanie w Git nie jest tak proste, ale jest proste i często całkowicie automatyczne.
+
+Dowiedzmy się, czym są gałęzie, jak są używane i jak działają.
+
+
+### Struktura gałęzi i nazewnictwo
+***
+Gałąź to po prostu łańcuch zatwierdzeń, które odchodzą od głównej linii rozwoju, jak gałąź na drzewie.
+
+Jeśli przechodzisz na Git z innego VCS, możesz być przyzwyczajony do nieco innej terminologii. VCS Subversion nazywa swoją domyślną gałąź `trunk`, podczas gdy Git nazywa ją `master`. Możesz zmienić nazwę domyślnej gałęzi, tak jak możesz zmienić nazwę dowolnej innej gałęzi. W tym module nazwiemy domyślną gałąź `main`.
+
+Gałąź zwykle zaczyna się od zatwierdzenia gałęzi domyślnej; w tym przypadku na `main`. Gałąź rozwija oddzielny łańcuch historii w miarę dodawania zatwierdzeń. Ostatecznie zmiany w gałęzi są ponownie scalane w `main`. W tym module nauczysz się dokonywać zatwierdzeń w gałęzi i łączyć je z `main` gałęzią.
+
+Załóżmy, że odgałęziasz się od main gałęzi. Oto jak zwizualizować to, co się dzieje:
+
+![](fig/branch-tree.png)
+
+Każda wielka litera na diagramie reprezentuje zatwierdzenie. Gałęzie mają nazwy takie jak `develope` `fix-fun-bug`, a gałęzie mogą mieć własne gałęzie. Ostatecznym celem jest umożliwienie programistom robienia tego, co muszą, bez wchodzenia na siebie nawzajem, i stworzenie głównej gałęzi, która reprezentuje najlepsze starania wszystkich zaangażowanych osób.
+
+
+### Twórz i przełączaj gałęzie (git branch i git checkout)
+****
+Częstym powodem tworzenia nowej gałęzi jest wprowadzanie zmian w istniejącej funkcji. Gałąź do tego celu byłaby zwykle nazywana gałęzią tematyczną lub gałęzią fabularną.
+
+Możesz utworzyć nową gałąź za pomocą `git branch` polecenia. Przełączaj się między gałęziami za pomocą `git checkout` polecenia.
+
+Spotkałeś się już `checkout` ze sposobem zastępowania plików w drzewie roboczym poprzez pobieranie ich z indeksu. Bez ścieżek na liście argumentów `checkout` aktualizuje wszystko w drzewie roboczym i indeksie, aby pasowały do określonego zatwierdzenia — w tym przypadku nagłówka gałęzi.
+
+
+### Połącz gałęzie (git merge)
+***
+
+Kiedy sfinalizujesz jakąś pracę w gałęzi, na przykład funkcję lub poprawkę błędu, będziesz chciał scalić tę gałąź z powrotem w gałąź główną. Możesz użyć git mergepolecenia, aby scalić określoną gałąź z bieżącą gałęzią.
+
+Na przykład, jeśli pracowałeś w oddziale o nazwie `my-feature`, przepływ pracy wyglądałby tak, jak w poniższym przykładzie:
+
+```{bash}
+#| eval: false
+git checkout main
+git merge my-feature
+```
+
+Po użyciu tych poleceń i rozwiązaniu wszelkich konfliktów scalania (konflikty scalania opiszemy w dalszej części tego modułu), wszystkie zmiany z twojej `my-feature` gałęzi będą w `branch main`.
+
+## Ćwiczenie – Utwórz gałąź jako Alicja
+
+Twoja znajoma programistka, Alice, chce dodać kod CSS, aby nadać styl zdjęciom kotów w Twojej witrynie. Alice chce wykonywać tę pracę we własnym oddziale.
+
+### Ustawiać
+***
+
+Zanim będziesz mógł przyjąć rolę Alicji, musisz trochę popracować, aby skonfigurować nagie repozytorium, które wszyscy będą mogli udostępniać, a następnie dodać kilka plików.
+
+
+Utwórz wspólne nagie repozytorium i zainicjuj je. 
+
+```{bash}
+#| eval: false
+
+mkdir Shared.git
+cd Shared.git
+git init --bare
+git symbolic-ref HEAD refs/heads/main
+```
+
+
+### Sklonuj udostępnione repozytorium dla Boba
+***
+
+Przejdź o jeden poziom wyżej z tego katalogu i utwórz katalog dla Boba do przechowywania jego repozytorium:
+
+```{bash}
+#| eval: false
+
+cd ..
+mkdir Bob
+cd Bob
+git clone ../Shared.git .
+git config user.name Bob
+git config user.email bob@contoso.com
+git symbolic-ref HEAD refs/heads/main
+``` 
+
+:::{.callout-important appearance="simple"}
+Ponieważ chcesz zacząć od domyślnej gałęzi main, musisz zmienić HEADtak, aby wskazywała, refs/heads/maina nie refs/heads/masterktóra jest domyślną nazwą gałęzi.
+:::
+
+
+### Dodaj pliki podstawowe
+***
+Jako ostatni krok konfiguracji dodamy pliki:
+
+```{bash}
+#| eval: false
+touch fun.r
+touch test.r
+git add .
+git commit -m "Create empty index.html and site.css files"
+```
+
+```{bash}
+#| eval: false
+code fun.r
+```
+
+wprowadźć
+
+```{r}
+#| eval: false
+
+new_fun <- function(a, b) {    
+    x  <-  (b / a) + a ^ 2
+    return(x)
+    }
+```
+
+Nastepnie:
+
+```{bash}
+#| eval: false
+code test.r
+```
+
+Wprowadźć"
+
+```{r}
+#| eval: false
+getwd()
+source("../bob/fun.r")
+# test base
+new_f(a = rnorm(10), b = rnorm(10, mean = 6))
+```
+
+Upewnij się, że jesteś w katalogu bob i wypchnij zmiany do nagiego repo.
+
+```{bash}
+#| eval: false
+git add .
+git commit -m "add new code to .r file"
+git push --set-upstream origin main
+```
+
+Ponieważ używamy innej domyślnej nazwy gałęzi, musisz powiedzieć gitowi, aby skojarzył twoją `main` gałąź z `main` gałęzią repozytorium źródłowego.
+
+Sprawdź dane wyjściowe. Jeśli zobaczysz ostrzeżenie podobne do tego przykładu, nie martw się. To ostrzeżenie tylko informuje użytkowników o zmianie w domyślnych zachowaniach Git.
+
+
+### Utwórz gałąź dla Alicji
+***
+
+Alicja chce utworzyć gałąź tematyczną `mod-fun`, w której będzie wykonywała swoją pracę. Przyjmijmy rolę Alicji, a następnie utwórz gałąź i dodaj trochę kodu w tej gałęzi.
+
+```{bash}
+#| eval: false
+cd ..
+mkdir alicja
+cd alicja
+git clone ../Shared.git .
+git config user.name Alicja
+git config user.email alicja@toto.com
+```
+
+Masz teraz aktualną kopię repozytorium. Aby potwierdzić, możesz wyświetlić zawartość pliku i uruchomić, git statusaby potwierdzić stan repozytorium.
+
+```{bash}
+#| eval: false
+ls
+git status
+```
+
+Uruchom `git branch` polecenie, aby utworzyć gałąź o nazwie `mod-fun`. Następnie uruchom `git checkout` polecenie, aby przełączyć się do tej gałęzi (ustaw ją jako bieżącą gałąź).
+
+```{bash}
+#| eval: false
+git branch mod-fun
+git checkout mod-fun
+```
+
+Wprowadźć zmiany w plikach:
+
+```{r}
+#| eval: false
+new_fun <- function(a, b) {    
+    
+    # czy numeric
+    if(!is.numeric(a)) stop("a - nie jest typu numeric")
+    if(!is.numeric(b)) stop("a - nie jest typu numeric")
+
+    x  <-  (b / a) + a ^ 2
+    
+    return(x)
+    }
+```
+
+Zatwierdźć
+
+```{bash}
+#| eval: false
+git commit -a -m "Add style for cat pictures"
+```
+
+
+W tym momencie Alicja chce udostępnić modyfikacje funkcji wszystkim innym, więc przełączają się z powrotem na `main`, następnie `pull` na wypadek, gdyby ktoś inny wprowadził zmiany miedzy czasie:
+
+```{bash}
+#| eval: false
+git checkout main
+git pull
+```
+
+Dane wyjściowe mówią, że `main` gałąź jest aktualna (innymi słowy, main na komputerze Alicji pasuje main do współdzielonego repozytorium). Tak więc Alice łączy `mod-fun` gałąź z `main` gałęzią, uruchamiając szybkie scalanie `git merge --ff-only` do przodu. Następnie Alice przepycha `main` repozytorium do wspólnego repozytorium.
+
+```{bash}
+#| eval: false
+git merge --ff-only mod-fun
+git push
+```
+
+W tym przypadku scalanie z szybkim przewijaniem nie było bezwzględnie konieczne, ponieważ `main` gałąź nie miała żadnych zmian, a Git i tak scaliłby zmiany. Ale używanie `--ff-only` flagi jest dobrą praktyką, ponieważ `--ff-only` scalanie kończy się niepowodzeniem, jeśli `main` uległo zmianie.
+
+:::{.callout-tip}
+Sprawdza aktualne branch z informacją w którym aktualnie jesteś:
+````
+git branch -a 
+git branch --list
+````
+:::
+
+
+## Ćwiczenie — Połącz gałąź Boba
+
+Podczas gdy Alice pracuje nad CSS dla strony internetowej, Bob pracuje w domu, błogo nieświadomy pracy, którą wykonuje Alice. Ten układ jest w porządku, ponieważ obaj używają gałęzi! Bob postanawia wprowadzić własne zmiany.
+
+
+### Utwórz oddział dla Boba
+***
+Wróć do katalogu Bob i uruchom następujące polecenie, aby utworzyć gałąź o nazwie `add-test`. Użyj popularnej `checkout -b` opcji, aby utworzyć gałąź i przełączyć się do niej za pomocą jednego polecenia.
+
+```{bash}
+#| eval: false
+cd ../bob
+git checkout -b add-test
+```
+
+Spradźć co zorbiłeś poleceniem: 
+
+```{bash}
+#| eval: false
+git branch -a
+```
+
+Dodamy kod testowania funkcji:
+
+```{bash}
+#| eval: false
+code test.r
+```
+
+
+```{r}
+#| eval: false
+getwd()
+source("../bob/fun.r")
+# test base
+new_f(a = rnorm(10), b = rnorm(10, mean = 6))
+
+# inny typ
+new_f(a = "5", b = rnorm(10, mean = 6))
+
+# rózna dlugosc
+new_f(a = rnorm(2), b = rnorm(6, mean = 6))
+
+```
+
+Zapisz plik i zamknij edytor.
+
+```{bash}
+#| eval: false
+touch dane.r
+```
+
+Uruchom git status, aby dokładnie sprawdzić zmiany:
+
+```{bash}
+#| eval: false
+git status
+```
+
+Następnie uruchom następujące polecenia, aby dodać nowy plik do indeksu i zatwierdzić wszystkie zmiany:
+
+```{bash}
+#| eval: false
+git add .
+git commit -a -m "add dane.r and modify test.r"
+```
+
+Bob wykonuje teraz tę samą czynność, co Alicja wcześniej. Bob przełącza się z powrotem na main gałąź i wykonuje pociągnięcie, aby sprawdzić, czy coś się zmieniło:
+
+```{bash}
+#| eval: false
+git checkout main
+git pull
+```
+
+Sprawdź dane wyjściowe. Tym razem dane wyjściowe wskazują, że dokonano zmian w gałęzi main we współdzielonym repozytorium (wynik wypychania Alicji). Wskazuje również, że zmiany pobrane z `main` udostępnionego repozytorium zostały połączone z `main` repozytorium Boba:
+
+```{bash}
+#| eval: false
+remote: Enumerating objects: 5, done.
+remote: Counting objects: 100% (5/5), done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
+Unpacking objects: 100% (3/3), 372 bytes | 53.00 KiB/s, done.
+From D:/Qnap/Github_git_vs_code/git_4_example/bob/../Shared
+   2a635a0..9de8bcb  main       -> origin/main
+Updating 2a635a0..9de8bcb
+Fast-forward
+ fun.r | 6 ++++++
+ 1 file changed, 6 insertions(+)
+```
+
+Następnie Bob łączy swoją gałąź z `main` gałęzią, aby `main` w repozytorium znajdowały się ich zmiany i zmiany Alicji. Następnie Bob przesyła main na swoim komputerze main oddział we wspólnym repozytorium:
+
+```{bash}
+#| eval: false
+git merge add-test --no-edit
+git push
+```
+
+Bob nie użył `--ff-only` flagi, ponieważ wiedzieli, że main się zmieniło. Połączenie z szybkim przewijaniem do przodu zakończyłoby się niepowodzeniem.
+
+### Synchronizuj repozytoria
+***
+W tym momencie Bob ma aktualne repozytorium, ale Alicja nie. Alicja musi zrobić git pull repozytorium z udostępnionego repozytorium, aby upewnić się, że mają najnowszą i najlepszą wersję projektu.
+
+Uruchom następujące polecenia, aby zsynchronizować repozytorium Alicji z udostępnionym repozytorium:
+
+```{bash}
+#| eval: false
+cd ../Alice
+git pull
+```
+
+Poświęć chwilę, aby sprawdzić, czy repozytorium Alice i repozytorium Boba są zsynchronizowane. Udało się bo wprotwadzone zmiany przez obie osoby były niezależne. 
+
+W następnej lekcji dowiesz się, jak rozwiązywać konflikty scalania, które występują, gdy zmiany wprowadzone przez dwóch lub więcej programistów nakładają się na siebie.
+
+## Ćwiczenie — Rozwiązywanie konfliktów scalania
+
+Czasami, bez względu na to, jak dobrze planujesz, coś idzie nie tak. Wyobraź sobie, że dwóch programistów pracuje jednocześnie nad tym samym plikiem projektu. Pierwszy programista mainbez problemu wypycha swoje zmiany do gałęzi repozytorium projektu. Kiedy drugi programista próbuje wypchnąć swoje zmiany, Git mówi, że wystąpił konflikt scalania . Plik, który drugi programista próbuje zmodyfikować, nie jest już aktualny pod względem najnowszych zmian lub wersji pliku. Wersja pliku musi zostać zaktualizowana, zanim zmiany wprowadzone przez drugiego programistę będą mogły zostać scalone. Deweloperzy korzystający z kontroli wersji obawiają się kilku rzeczy bardziej niż konfliktu scalania!
+
+Konflikty takie jak ten mogą się zdarzyć, więc musisz wiedzieć, jak sobie z nimi radzić. Dobrą wiadomością jest to, że Git dostarcza rozwiązania do radzenia sobie z konfliktami scalania.
+
+### Utwórz gałęzie dla Alicji i Boba
+***
+
+Zacznijmy od utworzenia gałęzi dla bob i gałęzi dla alicji. Obaj twoi znajomi programiści jednocześnie aktualizują pliki w repozytorium projektu. Nie są świadomi wzajemnych zmian, ponieważ dokonują aktualizacji w swoich lokalnych oddziałach.
+
+Upewnij się, że jesteś w dobrych lokalizacjach i utwórz branch dla Boba i Alicji: 
+
+```{bash}
+#| eval: false
+cd ../bob
+git checkout -b add-bob
+```
+
+```{bash}
+#| eval: false
+cd ../alicja
+git checkout -b add-cat 
+```
+
+Teraz wprowadźmy zmiany w gałęziach. Dokonaj zmiany jako Alice.
+
+```{r}
+#| eval: false
+new_fun <- function(a, b) {    
+    
+    # check type input
+    if(!is.numeric(a) | !is.numeric(b)) 
+        stop("check type input: type a and b == numeric")
+    
+    # check length input
+    if(!(length(a) == length(b))) 
+        stop("check length a and b: length(a)  == length(b)")
+
+    x  <-  (b / a) + a ^ 2
+    
+    # output data.frame
+    out <- data.frame(a, b, x)
+
+    return(out)
+    }
+```
+
+
+Teraz uruchom następujące polecenia Git, aby wypchnąć zmiany do repozytorium projektu. Najpierw dodamy zatwierdzenia dokonane w folderze Zasoby . Następnie przełączymy się z powrotem do `main` gałęzi i pobiegniemy `git pull`, aby upewnić się, że nic się nie zmieniło. Na koniec połączymy `add-alicja` oddział lokalny z `main` oddziałem, a następnie wypchniemy zmiany do repozytorium.
+
+```{bash}
+#| eval: false
+git status
+git commit -a -m "modify fun.r add check input adn add output"
+git checkout main
+git pull
+git merge --ff-only add-cat
+git push
+git diff HEAD^
+```
+
+Zakończ, potwierdzając, że wypychanie się powiodło.
+
+## Dokonaj zmiany jako Bob
+
+Równolegle bob wprowadzana podobne zmiany:
+
+```{bash}
+#| eval: false
+cd ../bob
+code fun.r
+```
+
+```{r}
+#| eval: false
+new_fun <- function(a, b) {    
+    
+    # czy numeric
+    if(!is.numeric(a)) stop("a - nie jest typu numeric")
+    if(!is.numeric(b)) stop("a - nie jest typu numeric")
+
+    # Czy ta sama dlugosc 
+    if(!(length(a) == length(b))) stop("sprawdz czy a i b są równe")
+    a = c(2,3,4,0,-1)
+
+    # Chceck a > 0 must have 
+    if (sum(!(a > 0)) == 0) 
+        stop("check input `a`, value a not be less or equal 0.0")
+
+    x  <-  (b / a) + a ^ 2
+
+    # output tible object 
+    out <- tibble(a, b, x)
+
+    return(out)
+    }
+```
+
+Zapisz zaminy a następnie zatwierdz je i wypchnij:
+
+```{bash}
+#| eval: false
+git commit -a -m "edit fun.r many check, modern output"
+git checkout main
+git pull
+git merge add-bob
+```
+
+I oto jest: przerażający konflikt scalania. 
+
+```{bash}
+#| eval: false
+error: Merging is not possible because you have unmerged files.
+hint: Fix them up in the work tree, and then use 'git add/rm <file>'
+hint: as appropriate to mark resolution and make a commit.
+fatal: Exiting because of an unresolved conflict.
+```
+
+Teraz pytanie brzmi: co ma zrobić Bob?
+
+### Rozwiąż konflikt scalania
+***
+Bob ma w tym momencie kilka opcji. Bob może wykonać jedną z następujących czynności:
+
+
+* Uruchom `git merge --abort` polecenie, aby przywrócić main gałąź do stanu sprzed próby scalenia. Uruchom git pull polecenie, aby uzyskać zmiany Alicji. Następnie utwórz nową gałąź, wprowadź zmiany i połącz ich gałąź z main gałęzią. Na koniec forsują swoje zmiany.
+
+* Uruchom `git reset --hard` polecenie, aby wrócić do miejsca, w którym znajdowały się przed rozpoczęciem scalania. 
+
+* Rozwiąż konflikt ręcznie, korzystając z informacji, które Git wstawia do plików, których dotyczy problem.
+
+Deweloperzy wydają się preferować ostatnią opcję. Gdy Git wykryje konflikt w wersjach treści, wstawia obie wersje treści do pliku. Git używa specjalnego formatowania, aby pomóc ci zidentyfikować i rozwiązać konflikt: 
+
+Oto jak teraz wygląda plik `fun.r` w repozytorium Boba. Zwróć uwagę na specjalne formatowanie treści z konfliktami:
+
+:::{.callout-important appearance="simple"}
+Jeśli pracujesz z VS code, to możesz teraz podglądnać ten plik w tym programie. Z poziomu repozytorium boba. 
+:::
+
+Niektóre edytory tekstu oferują integrację z Git i oferują pomoc, gdy zobaczą tekst wskazujący na konflikt scalania. Jeśli otworzysz plik fun.r w Visual Studio Code, zobaczysz następujący kod:
+
+![](fig/git_snapshot.png)
+
+
+W VS code wprowadź zmianyw fun.r i je zapisz. Zauważ, że nie wykrył zmian. Czerwone kułeczka. Dwa razy fykonuje te same operacje. Usuń jedną. 
+
+Tak powinien wygladać ostateczny kod. 
+
+```{r}
+#| eval: false
+new_fun <- function(a, b) {    
+    
+    # check type input
+    if(!is.numeric(a) | !is.numeric(b)) 
+        stop("check type input: type a and b == numeric")
+    
+    # check length input
+    if(!(length(a) == length(b))) 
+        stop("check length a and b: length(a)  == length(b)")
+
+    # Chceck a > 0 must have 
+    if (sum(!(a > 0)) == 0) 
+        stop("check input `a`, value a not be less or equal 0.0")
+
+    x  <-  (b / a) + a ^ 2
+
+    out <- data.frame(a, b, x)
+    
+    return(out)
+    }
+```
+
+A następnie:
+
+```{bash}
+#| eval: false
+git add fun.r
+git commit -a -m "conflicts"
+```
+
+Polecenie git addmówi Gitowi, że konflikt w pliku fun.rzostał rozwiązany.
+
+```{bash}
+#| eval: false
+git push
+```
+
+Zakończ, synchronizując zmiany z repozytorium Alicji:
+
+```{bash}
+#| eval: false
+cd ../Alice
+git pull
+code fun.r
+```
+
+Potwierdź, że wersja pobrana z shared.git jest poprawna.
+
+## Podsumowanie
+
+W tym module nauczyłeś się, jak używać gałęzi Git do współpracy z innymi programistami i jak rozwiązywać konflikty scalania. Wiesz:
+
+* Czym są gałęzie oraz jak i kiedy ich używać
+* Jak połączyć gałęzie
+* Jak rozwiązywać konflikty scalania
+
+W tym momencie wiesz wystarczająco dużo o Git, aby dobrze współpracować z innymi programistami i osiągnąć swoje cele projektowe!
