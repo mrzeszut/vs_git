@@ -1,0 +1,556 @@
+---
+title: "Wprowadzenie do Git"
+author: Mateusz Rzeszutek
+date: today 
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    toc-location: right
+    toc-title: Spis Treści
+    number-sections: true
+    number-depth: 3
+    embed-resources: true
+    html-math-method: katex
+    code-tools: true
+    code-block-bg: true
+    code-fold: show
+    code-summary: "Show and hide code"
+    link-external-icon: true
+    link-external-newwindow: true
+    smooth-scroll: true
+    self-contained: true
+    citation: true
+    theme: 
+        dark: solar
+        light: flatly
+    fontsize: 1.0em
+    linestretch: 1.3
+    fig-align: center
+execute: 
+  echo: true
+  error: false
+  warning: false
+  output: true
+---
+
+<style type="text/css"> body {text-align: justify}  </style>
+
+## Wprowadzenie 
+
+W tym module będziesz mógł rozpocząć własny projekt w Git i zdobyć trochę praktyki w edytowaniu niektórych błędów, które mogą występować w twoim kodzie. 
+
+
+### Cele nauczania
+***
+Pod koniec tego modułu będziesz:
+
+ * Dowiedz się, jak utworzyć nowy projekt Git
+ * Dowiedz się, jak śledzić zmiany w Git
+ * Dowiedz się, jak naprawić proste błędy w Git
+ * Odzyskaj usunięte pliki w Git
+
+## Ćwiczenie — Rozpocznij projekt
+
+Teraz, gdy poświęciłeś czas na naukę podstawowych poleceń git, przejdźmy do tworzenia projektu w git.
+
+W poniższych ćwiczeniach zaczniesz używać Gita, dodając prosty plik HTML do swojego drzewa roboczego. Następnie dokonasz pewnych zmian w katalogu i nauczysz się, jak zatwierdzić zmiany.
+
+### Utwórz i dodaj (etap) plik
+***
+
+Git niewiele robi z pustymi katalogami, więc dodajmy plik do `tree`.
+
+Upewnij się, że sesja jest nadal aktywna i że znajdujesz się w folderze repozytorium o nazwie Cats.
+
+Użyj `touch` polecenia, aby utworzyć plik o nazwie `skrypt.r`. Poleceniem git `status` sprawdź, co się dzieje. Git odpowiada, informując, że nic nie zostało zatwierdzone, ale katalog zawiera nowy plik. 
+
+Następnie użyj `git add .`, który rozpocznie śledzenie zmian w pliku. Uwaga `.` oznacza indeksowanie `all file` w twoim `working tree`. Ponów `git status` i sprawdźć odpowidźć.
+
+:::{.callout appearance="minimal"}
+touch skrypt.r 
+
+git status 
+
+git add . 
+
+git status 
+:::
+
+Zamiast używać `git add .`, mogłeś użyć , git add `skrypt.r` ponieważ plik ten był jedynym nowym plikiem w katalogu. Ale gdyby dodano kilka plików, `git add .pokryłoby` je wszystkie.
+
+### Pierwsze zatwierdzenie
+***
+
+Teraz, gdy plik skrypt.r został dodany do indeksu, następnym krokiem jest zatwierdzenie go 'commit'. Flaga `-m` w tym poleceniu mówi Gitowi, że przekazujesz również wiadomość wraz z zatwierdzeniem `"utworzono nowy ..."`.
+
+:::{.callout appearance="minimal"}
+git commit skrypt.r -m "utworzono nowy pusty plik" \
+git status \
+git log \
+:::
+
+:::{.callout-tip appearance="simple"}
+Istnieje wiele różnych sposobów formułowania komunikatów zatwierdzenia, ale dobrą wskazówką jest napisanie pierwszego wiersza w taki sposób, aby mówił, co zatwierdzenie robi z drzewem . Powszechne jest również pisanie pierwszej litery wielką literą i pomijanie kropki zamykającej, aby zaoszczędzić miejsce. Wyobraź sobie, że pierwsza linia wiadomości kończy zdanie zaczynające się od „Po naciśnięciu, to zatwierdzenie spowoduje…”
+
+Komunikat zatwierdzenia może mieć wiele wierszy. Pierwszy wiersz nie powinien mieć więcej niż 50 znaków, a po nim powinien znajdować się pusty wiersz. Kolejne wiersze nie powinny mieć więcej niż 72 znaki. Te wymagania nie są sztywne i nawiązują do czasów kart perforowanych i „głupich” terminali, ale sprawiają, że git logwydruk wygląda lepiej.
+:::
+
+### Zmodyfikuj plik skrypt.r i zatwierdź zmianę
+***
+
+`skrypt.r` została utworzony jako plik, który wykona kilka prostych operacji matematycznych. Następnym krokiem jest dodanie do niego kodu. 
+
+Może to zrobić na kilka sposobów. Jeśli masz otwarty terminal `git bash` w VS code to wpisz polecenie `code skrypt.r` - uruchomi on plik w oknie edytora. 
+
+Mozesz użyć innego edytora. np. z poziomu terminala wskazac konkretny edytor np.:
+
+:::{.callout appearance="minimal"}
+code skrypt.r \
+start notepad++ skrypt.r \
+notepad skrypt.r
+:::
+
+Teraz możesz zmodyfikować plik `skrypt.r` wpisując dowolne polecenie wykonywane przez R i zapisać plik. np.:
+
+```{r}
+# Funkcja
+new_f <- function(a, b) {
+    
+    if (!is.numeric(a)) stop("sprawdźć typ zmiennej")
+    if (!is.numeric(b)) stop("sprawdźć typ zmiennej")
+    
+    x  <-  (b / a) + a^2
+    
+    return(x)
+    }
+
+# Przykładowe dane
+a = rnorm(5, mean = 2)
+b = rnorm(5, mean = 4)
+
+# wydrukuj wynik
+print(data.frame(a, b, new_f(a = a, b = b)))
+```
+
+Zapisz plik. Poleceniem `git status` sprawdź stan repozytorium. `-a` - zatwierdza zmiany w `all file` w `working tree`
+
+:::{.callout appearance="minimal"}
+git commit -a -m "nowa funkcja"
+:::
+
+Zauważ, że tym razem nie uruchomiliśmy `git add` polecenia, aby wprowadzić zmiany. Zamiast tego użyliśmy `-a` flagi w git commitpoleceniu. Opcja `-a` dodaje wszystkie pliki, które zmodyfikowałeś od ostatniego zatwierdzenia. Nie doda nowych plików. Aby dodać nowe pliki, nadal potrzebujesz rozszerzenia `git add`.
+
+Zmiana w pliku `skrypt.r` została zatwierdzona. W repozytorium znajdują się teraz dwie wersje pliku, chociaż widzisz tylko jedną z nich (bieżącą). Jedną z korzyści korzystania z Git jest to, że możesz cofnąć wprowadzone zmiany lub cofnąć się w czasie i zobaczyć poprzednie wersje. Więcej na ten ważny temat później.
+
+Ponownie wykonaj polecenia w celu sprawdzenia stanu repozytorium: 
+
+:::{.callout appearance="minimal"}
+git status \
+git log
+:::
+
+Przetestuj swój skryp w terminalu `cmd`. Otwórz `r` lub `rStudio`. Uruchom polecenie: `source("path/skrypt.r")` - gdzie path - to ścieżka dostępu do pliku.  
+
+
+## Ćwiczenie — wprowadzaj zmiany i śledź je za pomocą Git
+
+Większość projektów deweloperskich ma charakter iteracyjny. Piszesz kod, a następnie testujesz kod i upewniasz się, że działa. Następnie piszesz więcej kodu i zapraszasz inne osoby do współtworzenia kodu. Iteracja oznacza wiele zmian: dodawanie kodu, poprawki błędów, usuwanie i zastępowanie.
+
+Podczas pracy nad projektem Git pomaga śledzić wprowadzane zmiany. Pozwala także cofnąć błędy. W następnych ćwiczeniach będziesz kontynuować tworzenie skryptu i nauczysz się kilku ważnych nowych poleceń, takich jak `git diff`.
+
+
+### Zmodyfikuj plik
+***
+Ponownie otwórz plik:
+
+:::{.callout appearance="minimal"}
+code skrypt.r  # z poziomu vs code w terminalu vs code \
+start notepad++ skrypt.r # z poziomu git bash w notepad++\
+notepad skrypt.r # z poziomu git bash w notatniku 
+:::
+
+W prowadź zmiany w pliku `skrypt.r`. Upewnij się, że masz zainstalwoane pakiety, których używamy.
+
+```{r}
+# Pakiety 
+library(knitr)
+library(tidyverse)
+
+# Funkcja
+new_f <- function(a, b) {
+    
+    if (!is.numeric(a)) stop("sprawdźć typ zmiennej")
+    if (!is.numeric(b)) stop("sprawdźć typ zmiennej")
+    
+    x  <-  (b / a) + a^2
+    
+    return(x)
+    }
+
+# Przykładowe dane
+
+a = rnorm(5, mean = 2) # losowa  
+b = rnorm(5, mean = 4) # losowa
+x = new_f(a = a, b = b)
+# wydrukuj wynik
+
+data.frame(a, b, x) %>% 
+    kable(digits = 2)
+```
+
+Uruchom polecenie `git diff`:
+
+:::{.callout appearance="minimal"}
+git diff
+:::
+
+Przed dodanymi wierszami pojawia się znak `plus`, a znak `minus` oznacza wiersze, które zostały usunięte.
+
+Domyślnym ustawieniem jest `git diff` porównanie drzewa roboczego z `indeksem`. Innymi słowy, pokazuje wszystkie zmiany, które nie zostały jeszcze wprowadzone (dodane do indeksu Gita za pomocą `git commit -a - m "..."`). Aby porównać działające drzewo z ostatnim zatwierdzeniem, możesz użyć `git diff HEAD`.
+
+Jeśli polecenie nie powraca do monitu po wykonaniu, wprowadź, `q` aby wyjść z widoku różnic.
+
+Następnie zatwierdź zmianę. Zamiast używać `-a` flagi, możesz jawnie nazwać plik, który ma zostać umieszczony i zatwierdzony, jeśli Git ma już plik w indeksie(`commit` polecenie szuka tylko istnienia pliku).
+
+:::{.callout appearance="minimal"}
+git commit -m "poprawki kodu" skrypt.r
+:::
+
+Użyj `git diff` ponownie, aby porównać drzewo robocze z indeksem:
+
+:::{.callout appearance="minimal"}
+git diff
+:::
+
+Tym razem `git diff` nie generuje danych wyjściowych, ponieważ `working tree`, indeks i `HEAD` wszystkie są zgodne. Możesz wykonać ponownie polecenia `git status` i `git log` i zobaczyć co sie stało. 
+
+Załóżmy, że mamy błąd w funkcji i zamias `a^2` miało być `a^b`. Jeśli użyłeś wbudowanego edytora kodu za pomocą `code` polecenia, nie zobaczysz niczego niezwykłego. Ale jeśli zdarzyło ci się użyć innego edytora, w tym edytora o nazwie `sed`, edytor prawdopodobnie utworzył plik `skrypt.r.bak`, którego nie chcesz zatwierdzać. Edytorzy tacy jak `Vim` i `Emacs` tworzą pliki kopii zapasowych o takich samych nazwach.
+
+Użyj następującego polecenia, aby utworzyć i otworzyć plik o nazwie `.gitignore` we wbudowanym edytorze kodu:
+
+:::{.callout appearance="minimal"}
+code .gitignore 
+:::
+
+Dodaj następujące wiersze do pliku:
+
+:::{.callout appearance="minimal"}
+*.bak \
+*~
+:::
+
+Ta linia instruuje `Git`, aby ignorował pliki, których nazwy kończą się na `.bak` lub `~`.
+
+:::{.callout-important}
+`.gitignore` jest bardzo ważnym plikiem w świecie Git, ponieważ zapobiega przesyłaniu zbędnych plików do kontroli wersji. Pliki `.gitignore` są dostępne dla popularnych środowisk programistycznych i języków.
+:::
+
+Zapisz i zamknij edytor, a następnie użyj tych poleceń, aby zatwierdzić zmiany:
+
+:::{.callout appearance="minimal"}
+git add -A \
+git commit -m "zmodyfikowano plik .gitignore" \
+git diff HEAD^ 
+:::
+
+W tym przykładzie użyto `-A` opcji  `git add` w celu dodania wszystkich nieśledzonych (i nieignorowanych) plików oraz plików, które uległy zmianie, do plików, które już znajdują się pod kontrolą Git.
+
+Jeśli zrobisz to `git diff` teraz, dane wyjściowe będą puste, ponieważ zmiany zostały zatwierdzone. Jednak zawsze możesz użyć `git diff HEAD^` polecenia, aby porównać różnice między ostatnim zatwierdzeniem a poprzednim zatwierdzeniem. Spróbuj i zobacz. 
+
+
+### Dodaj podkatalog
+***
+
+Rozpocznij od utworzenia podkatalogu o nazwie `dane` w katalogu projektu:
+
+:::{.callout appearance="minimal"}
+mkdir dane
+:::
+
+Następnie wykonaj `git status`: Dlaczego Git informuje, że nie ma nic do zatwierdzenia?
+
+Ludzie często są zaskoczeni, gdy dowiadują się, że Git nie uważa dodania pustego katalogu za zmianę. To dlatego, że Git śledzi tylko zmiany w plikach, a nie w katalogach.
+
+Czasami, szczególnie na początkowych etapach rozwoju, chcesz mieć puste katalogi jako symbole zastępcze. Powszechną konwencją jest tworzenie pustego pliku, często nazywanego `.git-keep`, w katalogu zastępczym.
+
+Użyj następujących poleceń, aby utworzyć pusty plik o tej nazwie w podkatalogu `dane` i dodać zawartość podkatalogu do indeksu:
+
+:::{.callout appearance="minimal"}
+touch dane/.git-keep \
+git add dane
+:::
+
+Kontynuuj, używając `git status` ponownie, aby sprawdzić stan repozytorium. Potwierdź, że zgłasza jeden nowy plik.
+
+
+### Zastąp plik
+***
+
+Teraz zastąpmy `.git-keep` plikiem, który będzie testował naszą funkcję. I utworzymy nowy plik. 
+
+:::{.callout appearance="minimal"}
+rm dane/.git-keep \
+cd dane \
+code new.r
+:::
+
+Wprowadźć zmiany w plikach. Jeden posłużył do napisania funkcji, a drugi do testowania. Jest to typowy zabieg pozwalajacy ograniczyć liczbę kodu w głownym dokumencie. 
+
+```{r}
+#| eval: false
+# Skrypt.r
+# Funkcja
+new_f <- function(a, b) {
+    
+    if (!is.numeric(a)) stop("sprawdźć typ zmiennej")
+    if (!is.numeric(b)) stop("sprawdźć typ zmiennej")
+    
+    x  <-  (b / a) + a^2
+    
+    return(x)
+    }
+```
+
+```{r}
+#| eval: false
+# new.r
+# Pakiety 
+library(knitr)
+library(tidyverse)
+
+# Przykładowe dane
+a = rnorm(5, mean = 2) # losowa  
+b = rnorm(5, mean = 4) # losowa
+x = new_f(a = a, b = b)
+
+# wczytaj funkcje 
+source("../skrypt.r")
+
+# test funkcji
+data.frame(a, b, x) %>% 
+    kable(digits = 2)
+```
+
+Użyj `git status`, aby wyświetlić podsumowanie plików, które zostały zmienione. Następnie użyj następujących poleceń, aby przenieść nieśledzone pliki do kontroli wersji i zatwierdzić zmiany.
+
+:::{.callout appearance="minimal"}
+git status \
+git add . \
+git status \
+git diff HEAD^ \
+git commit -a -m "dodano plik testowania funkcji"
+:::
+
+`-a` - wprwadzi zmiany w obydwu śledzonych plikach `skrypt.r` i `new.r`
+
+W przeciwieństwie do większości systemów VCS, Git zapisuje zawartość twoich plików, a nie różnice (zmiany) między nimi. To duża część tego, co sprawia, że ​​zatwierdzanie, rozgałęzianie i przełączanie między gałęziami jest tak szybkie w Git. Inne systemy VCS muszą zastosować listę zmian, aby przejść między jedną wersją pliku a drugą. Git po prostu rozpakowuje drugą wersję.
+
+
+### Lista zatwierdzeń
+***
+
+Teraz, gdy masz zarejestrowaną rozsądną liczbę zmian, możesz je `git log` przejrzeć. Podobnie jak w przypadku większości poleceń Git, istnieje wiele opcji do wyboru. Jednym z najbardziej przydatnych jest `--oneline`.
+
+Użyj następującego polecenia, aby przejrzeć wszystkie swoje zatwierdzenia:
+
+:::{.callout appearance="minimal"}
+git log
+:::
+
+:::{.callout appearance="minimal"}
+git log --oneline
+:::
+
+Sprawdź ponownie wyjście. Tym razem powinno to wyglądać znacznie prościej:
+
+Możesz zrozumieć, dlaczego, gdy masz setki (lub tysiące) zatwierdzeń w projekcie, `--oneline` opcją może być twóim najlepszym przyjacielem. Inną użyteczną opcją jest `-nX`, gdzie `X` jest numerem zatwierdzenia: 1 dla ostatniego zatwierdzenia, 2 dla poprzedniego zatwierdzenia i tak dalej. Aby się o tym przekonać, wypróbuj `git log -n2` lub `git log -n2 --oneline`.
+
+Poczyniliśmy znaczne postępy, korzystając z podstawowych funkcji Git. Następny krok: wejdź na wyższy poziom i naucz się używać Git do naprawiania typowych błędów.
+
+## Napraw proste błędy
+
+Czasami coś idzie nie tak. Możesz zapomnieć dodać nowy plik lub dodać plik przez pomyłkę. Być może popełniłeś błąd ortograficzny w swoim ostatnim zatwierdzeniu lub popełniłeś coś, czego nie zamierzałeś. Być może przypadkowo usunąłeś plik.
+
+Git pozwala wprowadzać zmiany bez strachu, ponieważ zawsze oferuje sposób na powrót do miejsca, w którym byłeś. Możesz nawet zmienić historię zatwierdzeń Gita, o ile zmienisz tylko te zatwierdzenia, które nie zostały udostępnione.
+
+
+### Zmień zatwierdzenie: --amend flaga
+***
+
+W poprzednim ćwiczeniu zaktualizowałeś plik `new.r` i `skryp.r`, ale zapomniałeś dodać komentarze opisujące prawidłowo twoją funkcję. Dodatkowo zorintowałeś się, że można ją uproscić, a plik `new.r` nie sprawdza, czy jest odporna na wrowadzenie niepoprawnych zmian.   
+
+Tak więc aktualizujesz pliki. W tym momencie możesz po prostu zatwierdzić poprawioną wersję, ale zamiast tego wolisz umieścić ją w tym samym zatwierdzeniu, co oryginał. Opcja `--amend` pozwala git commit zmienić historię (a jak często ma się szansę na zmianę historii).
+
+:::{.callout appearance="minimal"}
+git commit --amend --no-edit
+:::
+
+Opcja `--no-edit` mówi Gitowi, aby dokonał zmiany bez zmiany komunikatu zatwierdzenia. Możesz także użyć `--amend` do edycji wiadomości zatwierdzenia, dodania plików, które zostały przypadkowo pominięte w zatwierdzeniu, lub do usunięcia plików, które zostały dodane przez pomyłkę.
+
+:::{.callout-important appearance="simple"}
+Możliwość zmiany historii jest jedną z najpotężniejszych funkcji Gita. Podobnie jak w przypadku większości elektronarzędzi, należy go używać ostrożnie. W szczególności złym pomysłem jest zmienianie jakichkolwiek zatwierdzeń, które zostały udostępnione innemu programiście lub które zostały opublikowane we współdzielonym repozytorium, takim jak GitHub.
+:::
+
+
+### Odzyskaj usunięty plik: git checkout
+***
+
+Wyobraź sobie, że dokonałeś zmiany w pliku kodu źródłowego, która zepsuła cały projekt, więc chcesz przywrócić poprzednią wersję tego pliku. A może przypadkowo całkowicie usunąłeś plik. Git ułatwia odzyskanie wcześniejszej wersji, nawet jeśli bieżąca wersja już nie istnieje. Twoim najlepszym przyjacielem w tej sytuacji jest polecenie `git checkout`.
+
+`git checkout` ma wiele zastosowań, ale w następnym ćwiczeniu użyjemy go do odzyskania usuniętego pliku. git checkout aktualizuje pliki w `working tree`, aby odpowiadały wersji w indeksie lub w określonym drzewie.
+
+Jeśli przypadkowo usunąłeś plik, możesz go odzyskać, przenosząc wersję z `indeksu` z powrotem do `working tree` za pomocą tego polecenia:
+
+:::{.callout appearance="minimal"}
+git checkout -- "file_name"
+:::
+
+Możesz także wyewidencjonować plik z wcześniejszego zatwierdzenia (zwykle jest to głowa innej gałęzi), ale domyślnie plik jest pobierany z indeksu. Na liście argumentów `--` służy do oddzielenia zatwierdzenia od listy ścieżek plików. W tym przypadku nie jest to bezwzględnie potrzebne, ale gdybyś miał gałąź o nazwie `nazwa_pliku` (być może dlatego, że jest to nazwa pliku, nad którym pracuje się w tej gałęzi), zapobiegłoby to `--` pomieszaniu Gita.
+
+Później dowiesz się, że używasz również `checkout` do przełączania gałęzi.
+
+
+### Odzyskaj pliki: git reset
+***
+
+Możesz także usunąć plik za pomocą `git rm`. To polecenie usuwa plik z dysku, ale Git rejestruje również usunięcie pliku w indeksie.
+
+Więc jeśli uruchomiłeś to polecenie:
+
+:::{.callout appearance="minimal"}
+git rm skrypt.r \
+git checkout -- skrypt.r
+:::
+
+Git niechętnie odtworzy plik index.html ! Zamiast tego pojawiłby się błąd podobny do tego przykładu:
+
+:::{.callout appearance="minimal"}
+error: pathspec 'skrypt.r' did not match any file(s) known to git.
+:::
+
+Aby odzyskać `skrypt.r`, musielibyśmy użyć innej techniki: `git reset`. Możesz użyć `git reset` do wycofania zmian. Możesz odzyskać plik `skrypt.r` za pomocą tych dwóch poleceń:
+
+:::{.callout appearance="minimal"}
+git reset HEAD skrypt.r \
+git checkout -- skrypt.r
+:::
+
+Tutaj `git reset` anuluje usuwanie pliku z Git. To polecenie przywraca plik do indeksu, ale plik jest nadal usunięty z dysku. Następnie możesz przywrócić go na dysk z indeksu, używając `git checkout`.
+
+:::{.callout-tip}
+Oto kolejne „Aha!” chwila dla nowych użytkowników Git. Wiele systemów VCS tworzy pliki tylko do odczytu, aby mieć pewność, że tylko jedna osoba może wprowadzać zmiany w danej chwili; użytkownicy używają niepowiązanego `checkout` polecenia, aby uzyskać zapisywalną wersję pliku. Używają również `checkin` do operacji podobnej do tej, którą robi Git z kombinacją `add`, `commit`, i `push`. Ten fakt czasami powoduje zamieszanie, gdy ludzie zaczynają używać Git.
+:::
+
+### Cofnij zatwierdzenie: git revert
+***
+
+Ostatnim ważnym poleceniem, które należy znać, aby naprawić błędy w Git, jest `git revert`. `git checkout` działa tylko w sytuacjach, gdy zmiany do cofnięcia znajdują się w indeksie. Po zatwierdzeniu zmian musisz użyć innej strategii, aby je cofnąć. W takim przypadku możemy użyć, `git revert` aby cofnąć nasze poprzednie zatwierdzenie. Działa poprzez dokonanie kolejnego zatwierdzenia, które anuluje pierwsze zatwierdzenie.
+
+Możemy użyć `git revert HEAD` do wykonania zatwierdzenia, które jest dokładnym przeciwieństwem naszego ostatniego zatwierdzenia, cofając poprzednie zatwierdzenie, pozostawiając całą historię nienaruszoną. Ta `HEAD` część polecenia mówi Gitowi, że chcemy „cofnąć” tylko ostatnie zatwierdzenie.
+
+Nawiasem mówiąc, możesz również usunąć najnowsze zatwierdzenie za pomocą `git reset` polecenia:
+
+:::{.callout appearance="minimal"}
+git reset --hard HEAD^
+:::
+
+Git oferuje kilka rodzajów resetów. Wartością domyślną jest `--mixed`, która resetuje indeks, ale nie drzewo robocze; przesuwa również `HEAD`, jeśli określisz inne zatwierdzenie. Opcja `--soft` porusza się `HEAD` tylko i pozostawia bez zmian zarówno indeks, jak i drzewo robocze. Ta opcja pozostawia wszystkie zmiany jako „zmiany do zatwierdzenia”, jak `git status` by to ująć. Reset zmienia zarówno indeks , `--hard` jak i `working tree`, aby pasowały do określonego zatwierdzenia; wszelkie zmiany wprowadzone w śledzonych plikach zostaną odrzucone.
+
+
+## Ćwiczenie — Użyj Git, aby naprawić błędy
+
+### Odzyskiwanie usuniętego pliku: rm
+***
+
+Wykonaj poniższe polecenia i sprawdźć co się dzieje w folderze cats, który jest `working tree`.
+
+:::{.callout appearance="minimal"}
+rm skrypt.r \
+ls \
+git checkout -- skrypt.r \
+ls
+:::
+
+### Odzyskiwanie usuniętego pliku: git rm
+***
+
+Jeśli chcesz odzyskać usunięte pliki, sprawy są nieco bardziej skomplikowane, jeśli usuniesz je za pomocą `git rm` zamiast za pomocą `rm`.
+
+:::{.callout appearance="minimal"}
+git rm skrypt.r \
+git checkout -- skrypt.r \
+ls \
+git reset HEAD skrypt.r \
+git checkout -- skrypt.r \
+ls
+:::
+
+### Cofnij commit
+***
+
+Teraz skomplikujmy sprawę. Załóżmy, że przypadkowo nadpisałeś jeden plik innym plikiem lub dokonałeś zmiany w pliku, która okazała się dużym błędem. Chcesz przywrócić poprzednią wersję pliku, ale zmiany zostały już zatwierdzone. W tym przypadku prosty `git checkout` nie załatwi sprawy.
+
+Jednym z rozwiązań tego problemu jest cofnięcie poprzedniego zatwierdzenia.
+
+Wykonaj polecenie:
+
+:::{.callout appearance="minimal"}
+code skrypt.r
+:::
+
+Zmodyfikuj kod i zapisz plik:
+
+```{r}
+#| eval: false
+# Funkcja obliczania parametru x
+new_f <- function(a, b) {
+    
+    if (!is.numeric(a) | !is.numeric(b)) stop("sprawdźć typ zmiennej")
+    
+    x  <-  a # tutaj
+    
+    return(x)
+    }
+```
+
+Użyj tych poleceń, aby zatwierdzić zmiany i wyświetlić najnowsze zatwierdzenie:
+
+:::{.callout appearance="minimal"}
+git commit -m "error" skrypt.r \
+git log -n1 --oneline
+:::
+
+Flaga `-n1` tutaj mówi Gitowi, że chcemy tylko najnowszego wpisu zatwierdzenia.
+
+Użyj następujących poleceń, aby spróbować przywrócić plik index.html :
+
+:::{.callout appearance="minimal"}
+git checkout -- skrypt.r \
+code skrypt.r
+:::
+
+Czy coś się zmieniło? 
+
+W tej sytuacji najlepszym sposobem działania jest cofnięcie zmiany poprzez wykonanie kolejnego zatwierdzenia, które anuluje pierwsze. To praca dla git revert.
+
+Zamknij plik i użyj `git revert`, aby cofnąć zatwierdzone zmiany. Kontynuuj `git log` polecenie, aby pokazać ostatnie zatwierdzenie. Na koniec otwórz plik `skrypt.r`, aby upewnić się, że zawartość jest poprawna.
+
+:::{.callout appearance="minimal"}
+git revert --no-edit HEAD \
+git log -n4 --oneline \
+code skrypt.r
+:::
+
+Przywracanie nie jest jedynym sposobem na zaradzenie tej sytuacji; możesz po prostu edytować plik i zatwierdzić poprawiony plik. Ta opcja jest trudniejsza, jeśli wprowadzone zmiany były rozległe. W każdym razie git revert jest to dobry sposób na zasygnalizowanie swojego zamiaru.
+
+## Podsumowanie
+
+ * Jak stworzyć nowy projekt w Git
+ * Jak dokonywać zatwierdzeń w obszarze roboczym Git
+ * Jak śledzić zmiany i modyfikować pliki w obszarze roboczym Git
+ * Jak edytować wcześniejsze zatwierdzenia w obszarze roboczym Git
+ * Jak odzyskać usunięte pliki w obszarze roboczym Git
+ * Jak cofnąć zatwierdzenie w Git
+
+W tym momencie wiesz wystarczająco dużo o Gicie, aby użyć go do stworzenia i zmodyfikowania projektu. Kontrola wersji błyszczy we współpracy z innymi programistami. Sprawdź inne moduły w tej ścieżce szkoleniowej, aby dowiedzieć się więcej o używaniu Git z innymi!

@@ -1,0 +1,653 @@
+---
+title: "Working wiht git"
+author: Mateusz Rzeszutek
+date: today 
+format: 
+  html:
+    toc: true
+    toc-depth: 4
+    toc-location: right
+    toc-title: Spis Treści
+    number-sections: true
+    number-depth: 4
+    embed-resources: true
+    html-math-method: katex
+    code-tools: true
+    code-block-bg: true
+    code-fold: show
+    code-summary: "Show and hide code"
+    link-external-icon: true
+    link-external-newwindow: true
+    smooth-scroll: true
+    self-contained: true
+    citation: true
+    theme: 
+        dark: solar
+        light: flatly
+    fontsize: 1.0em
+    linestretch: 1.3
+    fig-align: center
+execute: 
+  echo: true
+  error: false
+  warning: false
+  output: true
+---
+
+<style type="text/css"> body {text-align: justify}  </style>
+
+## Wprowadzenie
+
+Wyobraź sobie, że jesteś nowym deweloperem oprogramowania w firmie, która pisze oprogramowanie avionics dla komercyjnych linii lotniczych. Kontrola jakości ma kluczowe znaczenie, a deweloperzy pracują w małych zespołach i używają usługi Git do kontroli wersji. Wiesz już kilka rzeczy na temat usługi Git i używasz jej samodzielnie do śledzenia zmian i naprawiania błędów. Wiesz jednak, że kontrola wersji jest najbardziej przydatna do pracy nad kodem z zespołem i chcesz zapoznać się z praktyką!
+
+Będziesz używać usługi Git do współpracy i śledzenia zmian (i osób, które je wprowadza); upewnij się, że nic złego się nie dzieje, gdy dwie osoby zmieniają ten sam plik; zachowaj kopię zapasową wszystkich plików kodu źródłowego.
+
+
+### Zawartość tego modułu:
+*** 
+
+* Klonowanie repozytorium
+* Wypychanie zmian do repozytorium zdalnego
+* Umieszczanie zmian w przechowalni
+* Ściąganie zmian od innych użytkowników w celu zaktualizowania repozytorium
+
+
+## Współpraca przy użyciu polecenia ściągania 
+
+Używasz usługi Git do kontroli wersji i nadszedł czas, aby zaprosić współpracowników do projektu. Podczas imprezy na pizzę w domu, twój przyjaciel oferuje, aby pomóc przynieść wizję do skutku, a ty chętnie zaakceptujesz.
+
+Najpierw musisz utworzyć kopię projektu Git. Następnie przyjaciel będzie chciała wysłać do Ciebie zmiany w miarę ich wprowadzania. Za pomocą usługi Git dwie lub więcej osób może współpracować nad projektem bez obawy o zastąpienie pracy innej osoby. Ponadto możesz sprawdzić pracę przyjaciela przed scaleniem jej. przyjaciel jest utalentowana, ale żaden deweloper nie jest doskonały. Ufaj, ale sprawdzaj.
+
+W tej lekcji dowiesz się, jak sklonować repozytorium (nazywane również `repo`), aby udostępnić je innym osobom. Dowiesz się również, jak korzystać z jednej z najważniejszych funkcji narzędzia Git: `pull requests`.
+
+
+### Klonowanie repozytorium (clone git)
+***
+W usłudze Git skopiuj repozytorium, klonując je przy użyciu `git clone` polecenia. Repozytorium można sklonować niezależnie od miejsca przechowywania, o ile masz adres URL lub ścieżkę, do której ma być wskazywany.
+
+`git clone` akceptuje ścieżkę systemu plików; ścieżka SSH (na przykład — będziesz znać ten formularz, `git@example.com:friends/Cats` jeśli użyto protokołu Rsync lub SCP) lub adres URL, zazwyczaj rozpoczynający się od `file:`, `git:` lub `ssh`. Różne formularze opisano w dokumentacji programu `git clone`. W systemach Unix i Linux operacja klonowania używa twardych linków, więc jest szybka i używa minimalnej ilości miejsca, ponieważ należy skopiować tylko wpisy katalogu, a nie pliki.
+
+
+### Repozytoria zdalne (git pull)
+***
+Gdy narzędzie Git klonuje repozytorium, tworzy odwołanie do oryginalnego repozytorium, które jest nazywane repozytorium zdalnym przy użyciu nazwy `origin`. Konfiguruje sklonowane repozytorium, aby sklonowane repozytorium pobierało dane z repozytorium zdalnego lub pobierało z niego dane. (Usługa Git może również wypychać. W dalszej części tego modułu dowiesz się więcej na temat wypychania w usłudze Git. `origin` to domyślna lokalizacja usługi Git do ściągania zmian z i wypychania zmian do. `git pull` kopiuje zmiany z repozytorium zdalnego do lokalnego. Polecenie `git pull` jest bardzo wydajne, ponieważ kopiuje tylko nowe zatwierdzenia i obiekty, a następnie sprawdza je w drzewie roboczym.
+
+Możesz ściągnąć `origin` za pomocą `git pull` polecenia. Warto porównać polecenie `git pull` z innymi metodami kopiowania plików. Polecenie `scp` kopiuje wszystko. (`scp` jest podobny do polecenia systemu Unix `cp`, z tą różnicą, że skopiowane pliki nie muszą znajdować się na tym samym komputerze). Jeśli w katalogu zdalnym znajduje się 10 000 plików, `scp` kopiuje je wszystkie. Wydajniejszy program o nazwie Rsync analizuje każdy plik w katalogach lokalnych i zdalnych i kopiuje tylko te, które są różne. Funkcja Rsync jest często używana do tworzenia kopii zapasowych, ale nadal musi tworzyć skróty każdego pliku, chyba że pliki mają różne rozmiary lub daty utworzenia.
+
+Usługa Git analizuje tylko zatwierdzenia. Wie już ostatnie zatwierdzenie, które pochodzi z repozytorium zdalnego, ponieważ zapisano listę zatwierdzeń. Następnie usługa Git informuje komputer, że kopiuje z programu, aby wysłać wszystkie zmienione elementy, w tym nowe zatwierdzenia i obiekty, do których wskazują. Te zatwierdzenia i obiekty są umieszczane w pliku nazywanym pakietem i wysyłane w jednej partii. Na koniec usługa Git aktualizuje drzewo robocze, rozpakując wszystkie obiekty, które uległy zmianie, i scalając je (w razie potrzeby) z zatwierdzeniami i obiektami w drzewie roboczym.
+
+Usługa Git ściąga lub wypycha tylko wtedy, gdy mówisz. Różni się to od, powiedzmy, Dropbox, który musi poprosić system operacyjny o powiadomienie go o wszelkich zmianach wprowadzonych w jego folderze i od czasu do czasu zapytać serwer, czy ktokolwiek inny wprowadził zmiany.
+
+
+### Tworzenie żądań ściągnięcia (git request-pull)
+***
+Gdy inny deweloper, sklonował repozytorium i wprowadził pewne zmiany lokalnie, będzie chciał włączyć te zmiany z powrotem do oryginalnego repozytorium. Może się wydawać, że wypychanie tych zmian do oryginalnego repozytorium jest właściwym podejściem. Jednak wypchnięcie do oryginalnego repozytorium nie powiedzie się, ponieważ inni użytkownicy nie mają uprawnień do wprowadzania zmian w repozytorium. I tak powinno być. Na razie chcesz przejrzeć zmiany przychodzące przed scaleniem ich z główną bazą kodu.
+
+Na razie kolega będzie musiała przesłać `pull requests`, aby poprosić Cię o ściągnięcie zmian do głównej bazy kodu. Możesz to zrobić przy użyciu polecenia `git request-pull`, co może wyglądać następująco:
+
+:::{.callout appearance="minimal"}
+git request-pull -p origin/main .
+:::
+
+Odwołuje się do `main` gałęzi zdalnej `origin` jako `origin/main`.
+
+To żądanie ściągnięcia jest zasadniczo takie samo jak żądanie ściągnięcia w usłudze GitHub (GitHub to miejsce do przechowywania kodu, którego nie omówiono w tym module). Żądanie ściągnięcia daje możliwość przejrzenia zmian innych współpracowników przed dołączeniem ich pracy do pracy wykonywanej w witrynie internetowej. **Przeglądy kodu są ważną częścią** — niektórzy twierdzą, że najważniejszą częścią programowania opartego na współpracy.
+
+
+### Tworzenie zdalnego repo (git remonte) i żądania ściągnięcia (git pull)
+***
+Jako właściciel projektu musisz wiedzieć, jak scalić repo. Najpierw użyj `git remote` polecenia, aby skonfigurować repozytorium innego dewelopera jako repozytorium zdalne. Następnie użyjesz tego zdalnego do ściągania i żądań ściągnięcia za pomocą `git pull` polecenia.
+
+Polecenie `git pull` jest faktycznie kombinacją dwóch prostszych operacji: `git fetch`, która pobiera zmiany, i `git merge`, która scala te zmiany w Twoim repozytorium. W takim przypadku scalanie zostało szybko przekazane, co oznacza, że miałeś najnowsze zatwierdzenie w swoim repozytorium, więc ich zatwierdzenie można dodać do przodu historii bez żadnych modyfikacji.
+
+
+## Ćwiczenie — klonowanie repozytorium
+
+Aby przećwiczyć pracę klonującego repozytorium i wysyłającego żądanie ściągnięcia, musimy najpierw skonfigurować repozytorium, które będziemy klonować.
+
+
+### Ustaw repo
+***
+Jeśli korzystasz z Git w wersji 2.28.0 lub nowszej, użyj następujących poleceń:
+
+:::{.callout appearance="minimal"}
+mkdir r_proj \
+cd r_proj \
+git init --initial-branch=main \
+git init -b main \
+git config user.name "<USER_NAME>" \
+git config user.name \
+git config user.email "<USER_EMAIL>" \
+git config user.email
+:::
+
+W tym przykąłdzie konfigurujemy użytkowniak lokalnie a nie globalnie, jak to miało miejsce wcześniej. Teraz utworzymy plik.
+
+:::{.callout appearance="minimal"}
+code fun.r
+:::
+
+```{r}
+#| label: funkcja
+# Funkcja obliczania parametru x
+
+new_f <- function(a, b) {
+    
+    if (!is.numeric(a) | !is.numeric(b)) stop("sprawdźć typ zmiennej")
+    
+    x  <-  (b / a) + a ^ 2
+    
+    return(x)
+    }
+```
+
+Utwórz kilka plików za pomocą touch polecenia, a następnie przygotuj i zatwierdź pliki za pomocą Git:
+
+:::{.callout appearance="minimal"}
+touch test.r \
+mkdir dane \
+touch dane/dane.r \
+ls \
+ls dane \
+git add . \
+git status \
+git commit -m "puste pliki testu i generowania danych" \
+git log \
+:::
+
+Dodaj kod testujący funkcej do pliku `test.r`
+
+:::{.callout appearance="minimal"}
+code test.r
+:::
+
+```{r}
+#| label: edycja test.r
+#| eval: false
+# Pakiety 
+x = c("knitr", "tidyverse")
+lapply(x,  require, character.only = T)   
+
+# Przykładowe dane
+a = rnorm(5, mean = 2) # losowa  
+b = rnorm(5, mean = 4) # losowa
+x = new_f(a = a, b = b)
+
+# wczytaj funkcje 
+source("skrypt.r")
+
+# test funkcji
+data.frame(a, b, x) %>% 
+    kable(digits = 2)
+```
+
+Zapisz plik. Następnie zmodyfikuj plik `dane.r` i zapisz zamiany.
+
+:::{.callout appearance="minimal"}
+code dane/dane.r
+:::
+
+```{r}
+# Przykładowe dane
+a = rnorm(5, mean = 2) # losowa  
+b = rnorm(5, mean = 4) # losowa
+x = new_f(a = a, b = b)
+```
+
+Na koniec ponownie zatwierdź zmiany. Szybko sprawdź swój dziennik Git, aby upewnić się, że wszystko wygląda dobrze.
+
+:::{.callout appearance="minimal"}
+git add . \
+git commit -m "dodano nowy kod" \
+git log --oneline
+:::
+
+
+### Klonowanie repozytorium 
+***
+
+Teraz przyjmijmy rolę `przyjaciela np. Karola` i przećwiczmy klonowanie repozytorium do współpracy.
+
+Aby zasymulować, że Karol klonuje repozytorium na swoim komputerze, utworzysz katalog o nazwie Karol na swoim komputerze i sklonujesz do niego katalog projektu. W prawdziwym życiu taką współpracę można osiągnąć, konfigurując udział sieciowy lub pilota, do którego można uzyskać dostęp za pomocą adresu URL.
+
+Utwórz katalog o nazwie Karol, aby sklonować repozytorium. Nie może to być podkatalog twojego katalogu projektu (r_proj), więc `cd` ponownie przejdź do katalogu nadrzędnego z katalogu twojego projektu, aby Karol była rodzeństwem katalogu projektu. Następnie `cd` do katalogu `karol`.
+
+:::{.callout appearance="minimal"}
+cd \
+mkdir karol \
+cd karol
+:::
+
+Teraz użyj, git clone aby sklonować repozytorium znajdujące się w katalogu projektu do katalogu karol. Pamiętaj o umieszczeniu kropki na końcu polecenia:
+
+:::{.callout appearance="minimal"}
+git clone ../r_proj . \
+ls \
+git log
+:::
+
+Teraz Karol posiada klon twojego repozytorium. Zna też historię zmian, która wprowadziłeś. 
+
+## Ćwiczenie - Make a pull request
+
+Upewnij się, że nadal znajdujesz się w katalogu `karol`, który jest głównym folderem repozytorium `klona r_proj`. Możesz użyć tego polecenia `pwd`, aby zweryfikować lokalizację. Jęsli jesteś w innym miejscu uzyj `cd` lub poprostu otórz git bash w tym folderze. 
+
+W tej chwili karol nie ma nic do ściągnięcia, ponieważ nie wprowadziłeś żadnych zmian od czasu, gdy karol sklonowała repozytorium. Możesz to udowodnić za pomocą następującego polecenia, które pokazuje dane wyjściowe `Already up-to-date`:
+
+
+:::{.callout appearance="minimal"}
+git pull
+:::
+
+### Wprowadź zmianę i prześlij żądanie ściągnięcia
+***
+
+Alicja rozpoczyna pracę nad stroną internetową. Pierwszą decyzją Alicji jest zmiana koloru tła witryny. Alice eksperymentuje lokalnie i ostatecznie wybiera swój ulubiony odcień jasnoniebieskiego.
+
+Skonfiguruj tożsamość karol, uruchamiając następujące polecenia:
+
+:::{.callout appearance="minimal"}
+git config user.name "karol k" \
+git config user.email "karolk@agh.edu.pl" \
+code test.r
+:::
+
+Zmodyfikuj plik i zapisz go:
+
+```{r}
+#| eval: false
+# Pakiety 
+x = c("knitr", "tidyverse")
+lapply(x,  require, character.only = T)   
+
+# Przykładowe dane
+source("dane/dane.r")
+
+# wczytaj funkcje 
+source("skrypt.r")
+
+# test funkcji
+data.frame(a, b, x) %>% 
+    kable(digits = 2)
+```
+
+Zatwierdźć zmiany, przeglądnij historię repo. 
+
+:::{.callout appearance="minimal"}
+git commit -a -m "wprowadzono odwolanie w plik test do dane" \
+git status \
+git log -n1
+:::
+
+Następnie wykonaj żądanie ściągnięcia z powrotem do pierwotnego repozytorium.
+
+:::{.callout appearance="minimal"}
+git request-pull -p origin/main .
+:::
+
+Sprawdź dane wyjściowe. Powinieneś zobaczyć dane wyjściowe podobne do poniższego przykładu (ostatnie kilka lini):
+
+:::{.callout appearance="minimal"}
+ #  Przykładowe dane \
+-a = rnorm(5, mean = 2) # losowa \
+-b = rnorm(5, mean = 4) # losowa \
+-x = new_f(a = a, b = b) \
++source("dane/dane.r") \
+
+ # wczytaj funkcje \
+ source("skrypt.r") \
+:::
+
+### Utwórz zdalne i żądanie ściągnięcia
+
+Ponieważ twój katalog projektu i katalog karola znajdują się na tym samym komputerze, możesz ściągać zmiany bezpośrednio z katalogu karol. W prawdziwym życiu katalog karol znajdowałby się na komputerze karola. Rozwiązujesz tę sytuację, konfigurując zdalne repo za pomocą `git remote` polecenia. Następnie używasz tego `zdalnego ropo` do  `pull` i `push`. W tym ćwiczeniu konfigurowanie dwóch komputerów do wykonania tych kroków jest niepraktyczne, więc skonfigurujemy `remon` używającego lokalnej nazwy ścieżki. **W rzeczywistości zamiast tego użyłbyś ścieżki sieciowej lub adresu URL.**
+
+Wróć do katalogu projektu i ipewnij się czy to na pewno ty wprowadzasz te zmiany `git config --list` a nie karol. Powinno tak być jeśli utworzyłeś lokalnie uzytkowników w poszczególnych folderach. 
+
+:::{.callout appearance="minimal"}
+cd ../r_proj \
+git config --list \
+:::
+
+Teraz i użyj `git remote` polecenia, aby utworzyć połaczenie zdalne o nazwie `remote-karol` z twojego repo do katalogu projektu `karol`. 
+
+
+:::{.callout appearance="minimal"}
+git remote add remote-karol ../karol
+:::
+
+Teraz wykonaj pociągnięcie:
+
+:::{.callout appearance="minimal"}
+git pull remote-karol main
+:::
+
+Zauważ, że musisz określić `branch`, `main`, w poleceniu `pull`. W następnej lekcji dowiesz się, jak skonfigurować nadrzędny adres URL dla `branch`.
+
+Sprawdź czy zmiana wprowadzona przez karol znajduje się w twoim repo. 
+
+:::{.callout appearance="minimal"}
+git log \
+git diff HEAD^
+:::
+
+Powinienes zauwazyć, że usunięto 3 wiersze i dodano jeden. 
+
+Możesz to zrobic oddzielnie dla każdego pliku, jest to rpzydatne, gdy jest dużo zmian:
+
+:::{.callout appearance="minimal"}
+git diff HEAD^ fun.r \
+git diff HEAD^ dane/dane.r
+:::
+
+Zabawa dopiero się zaczyna! W następnej lekcji dowiesz się, jak skonfigurować i używać współdzielonego repozytorium, co sprawia, że współpraca jest prostsza i wygodniejsza.
+
+### Ćwiczenie — współpraca przy użyciu udostępnionego repozytorium
+***
+
+Pobieranie bezpośrednio z repozytorium innej osoby działa, pod warunkiem, że oboje jesteście w tej samej sieci. Jest to jednak niezdarny proces, a większość współpracowników nie jest w tej samej sieci. Lepiej jest skonfigurować centralne repozytorium, do którego wszyscy współpracownicy mogą przesyłać i pobierać dane.
+
+Kiedy opowiadasz swojemu przyjacielowi programiście, Bob's, o swoim projekcie, a Bob prosi o uczestnictwo, właśnie ty decydujesz — zakładasz centralne repozytorium, które jest również nazywane repozytorium nagim.
+
+#### Stwórz nagie repozytorium
+*** 
+
+Potrzebujesz repozytorium, które nie ma działającego `tree`. Nagie repozytorium ma kilka zalet w stosunku do działającego `tree`:
+
+Bez działającego `tree` każdy może wprowadzać zmiany bez martwienia się, która `tree` jest wyewidencjonowana.
+
+Git z łatwością wykrywa, kiedy inny użytkownik wprowadził zmiany, które mogą kolidować z twoimi.
+
+Wspólne repozytorium skaluje się do dowolnej liczby programistów. W przypadku samego repozytorium musisz wiedzieć tylko o udostępnionym repozytorium, a nie o wszystkich innych współpracownikach, od których może być konieczne pobieranie.
+
+Umieszczając wspólne repozytorium na serwerze, do którego wszyscy mają dostęp, nie musisz martwić się o zapory ogniowe i uprawnienia.
+Nie potrzebujesz oddzielnych kont na serwerze, ponieważ Git śledzi, kto dokonał każdego zatwierdzenia. (GitHub ma miliony użytkowników, którzy współużytkują to gitkonto. Wszyscy używają kryptograficznego protokołu sieciowego Secure Shell (SSH), a użytkownicy są rozróżniani na podstawie kluczy publicznych.)
+
+Tworzenie samego repozytorium do udostępniania jest łatwe:
+
+Utwórz nowy katalog o nazwie `Shared.git` na tym samym poziomie, co katalogi karol i r_proj, aby przechowywać gołe repozytorium (cofasz sie raz górę, jeśli robiłeś to dobrze):
+
+:::{.callout appearance="minimal"}
+cd .. /
+mkdir nagie.git /
+cd nagie.git
+:::
+
+:::{.callout-important appearance="simple"}
+Nazywanie katalogu z końcówką `nagie.git` jest zgodne z długoletnią tradycją przypisywania gołym repozytoriom nazwy, która kończy się `.git` jest to odróżnienie ich od działających drzew. Jest to konwencja, ale nie wymóg.
+::::
+
+Teraz użyj następującego polecenia, aby utworzyć nagie repozytorium w katalogu współdzielonym:
+
+:::{.callout appearance="minimal"}
+git init --bare
+:::
+
+Gdy repozytorium jest nadal puste, `git checkout` polecenia nie można użyć do ustawienia nazwy gałęzi domyślnej. Aby wykonać to zadanie, możesz zmienić `HEAD` gałąź tak, aby wskazywała inną gałąź; w tym przypadku jest to main gałąź:
+
+:::{.callout appearance="minimal"}
+git symbolic-ref HEAD refs/heads/main
+:::
+
+:::{.callout-important appearance="simple"}
+Powinno się zmienić w lini poleceń git basha z `BARE:master` na `BARE:main` 
+
+![](fig/git_bare.png)
+
+:::
+
+Następnym krokiem jest przeniesienie zawartości repozytorium do udostępnionego repozytorium. Użyj tych poleceń, aby powrócić do katalogu projektu, w którym przechowywane jest twoje repozytorium, skonfigurować `origin remote` i wykonać wstępne `push`:
+
+:::{.callout appearance="minimal"}
+cd ../r_proj
+git remote add origin ../nagie.git
+git push origin main
+:::
+
+Sprawdź dane wyjściowe. Dane wyjściowe powinny wskazywać sukces:
+
+:::{.callout appearance="minimal"}
+$ git push origin main \
+Enumerating objects: 13, done. \
+Counting objects: 100% (13/13), done. \
+Delta compression using up to 16 threads \
+Compressing objects: 100% (10/10), done. \
+Writing objects: 100% (13/13), 1.26 KiB | 1.26 MiB/s, done. \
+Total 13 (delta 3), reused 0 (delta 0), pack-reused 0 \
+To ../nagie.git \
+ * [new branch]      main -> main \
+:::
+
+Chcesz `push` i domyślnie `pull` używać main gałęzi origin, tak jakbyś zrobił swoje repozytorium, klonując je w pierwszej kolejności. Ale najpierw musisz powiedzieć Gitowi, którą gałąź ma śledzić.
+
+:::{.callout appearance="minimal"}
+git branch --set-upstream-to origin/main
+:::
+
+Git narzekałby, gdybyś spróbował uruchomić to polecenie przed początkowym wypychaniem, ponieważ nowe repozytorium nie miało rozgałęzień. Git nie może śledzić gałęzi, która nie istnieje. Wszystko, co Git robi pod maską, to szukanie `.git/refs/remotes/origin` pliku o nazwie trunk.
+
+#### Konfiguracja dla współpracowników
+***
+
+Następnym krokiem dla Boba jest sklonowanie samego repozytorium, a następnie dla karola ustawienie pochodzenia w swoim repozytorium, aby kierować je do współdzielonego repozytorium dla wypychania i ściągania.
+
+Utwórz katalog o nazwie Bob, który jest odpowiednikiem katalogu projektu, a następnie przejdź do katalogu Bob i sklonuj udostępnione repozytorium (pamiętaj o umieszczeniu kropki na końcu polecenia):
+
+:::{.callout appearance="minimal"}
+cd ..
+mkdir Bob \
+cd Bobcd \
+git clone ../nagie.git .
+:::
+
+Obecnie repozytorium karol jest skonfigurowane do wypychania i pobierania z własnego repozytorium. Użyj następujących poleceń, aby przejść do katalogu karol i zmienić origin, aby wskazywał na udostępnione repozytorium:
+
+:::{.callout appearance="minimal"}
+cd ../karol /
+git remote set-url origin ../nagie.git
+:::
+
+#### Rozpocznij współpracę 
+
+Teraz, gdy Bob jest skonfigurowany do pracy w witrynie internetowej, postanawia poprawić kod `test.r`. Wcielmy się przez chwilę w postacie Boba oraz karola i nauczmy się podstaw współpracy.
+
+:::{.callout appearance="minimal"}
+cd ../Bob \
+git config user.name Bob \
+git config user.email bob@contoso.com
+code test.r
+:::
+
+Otwórz `test.r` i zmodyfikuj kod:
+
+```{r}
+#| label: edit test.r
+#| eval: false
+# Pakiety 
+x = c("knitr", "tidyverse")
+lapply(x,  require, character.only = T)   
+
+# Przykładowe dane
+source("dane/dane.r")
+
+# wczytaj funkcje 
+source("fun.r")
+
+x <- new_f(a = a, b = b)
+
+# test funkcji
+data.frame(a, b, x) %>% 
+    kable(digits = 2)
+```
+
+Teraz kod działa :)  Następnie zapisz plik i zamknij edytor. Zatwierdź zmiany i wypchnij do zdalnego źródła:
+
+:::{.callout appearance="minimal"}
+git commit -a -m "dodano polecenie użycia funkcji"
+git diff HEAD^
+git push
+:::
+
+Bob ukończył pracę oraz wysłał ją do nagie.git repo. 
+
+Gdy Bob edytuje plik test.r Karol postanawia również wprowadzić zmiany, ale w dwóch plikach. 
+
+:::{.callout appearance="minimal"}
+cd ../karol \
+cdoe test.r \
+code fun.r
+:::
+
+Wykonaj następujące modyfikacje:
+
+```{r}
+#| label: karol edit fun.r
+#| eval: false
+# Funkcja obliczania parametru x
+new_f <- function(a, b) {
+    
+    # muszą być numeric
+    if (!is.numeric(a) | !is.numeric(b)) 
+        stop("sprawdźć typ zmiennej, musi być numeric")
+
+    # muszą byc tej samej długości
+    if (!(length(a) == length(b))) 
+        stop("wektory a i b muszą być tej samej długości lenght(x)")
+    
+    x  <-  (b / a) + a ^ 2
+    
+    return(x)
+    }
+```
+
+```{r}
+#| label: karol edit test.r
+#| eval: false
+code# Pakiety 
+x = c("knitr", "tidyverse")
+lapply(x,  require, character.only = T)   
+
+# Przykładowe dane
+source("dane/dane.r")
+
+# wczytaj funkcje 
+source("fun.r")
+
+# base test
+x <- new_f(a = a, b = b)
+x
+
+# test diff length
+x <- new_f(a = 2, b = c(2,4))
+x
+
+# test diff type
+
+x <- new_f(a = "a", b = 3)
+x
+
+# test funkcji
+data.frame(a, b, x) %>% 
+    kable(digits = 2)
+```
+
+Załóżmy teraz, że Karol otrzymuje wiadomość e-mail od Boba z informacją, że Bob dokonał zmian w witrynie. Karol postanawia wycofać zmiany wprowadzone przez Boba przed zatwierdzeniem własnych. (Gdyby karol zatwierdziła już swoje zmiany, mieliby inny problem, który omówiono w innym module). Alicja uruchamia to polecenie:
+
+:::{.callout appearance="minimal"}
+git pull
+:::
+
+Wyjście: 
+:::{.callout appearance="minimal"}
+remote: Enumerating objects: 5, done. \
+remote: Counting objects: 100% (5/5), done. \
+remote: Compressing objects: 100% (3/3), done. \
+remote: Total 3 (delta 2), reused 0 (delta 0), pack-reused 0 \
+Unpacking objects: 100% (3/3), 300 bytes | 30.00 KiB/s, done. \
+From ../nagie \
+   66ba293..e7d7fc4  main       -> origin/main \
+error: Your local changes to the following files would be overwritten by merge: \
+        test.r \
+Please commit your changes or stash them before you merge. \
+Aborting \
+Updating 4be13e8..e7d7fc4 \
+:::
+
+Git ostrzega Karola, że ściągnięcie spowoduje nadpisanie wersji pliku `test.r` i utratę wprowadzonych zmian. To dlatego, że Bob zmodyfikował także plik test.r . Gdyby Karol nie zmienił `test.r`, Git dokonałby scalenia.
+
+Użyj `git diff` polecenia, aby zobaczyć, jakie zmiany wprowadził Bob w pliku index.html :
+
+:::{.callout appearance="minimal"}
+git diff origin -- test.r
+:::
+
+Sprawdź dane wyjściowe. Z danych wyjściowych widać wyraźnie, że zmiany Alicji i Boba nie nakładają się na siebie. Teraz Alicja może ukryć swoje zmiany.
+
+`git stash` zapisuje stan drzewa roboczego i indeksu, wykonując kilka tymczasowych zatwierdzeń. Pomyśl o schowku jako o sposobie na zapisanie bieżącej pracy, gdy robisz coś innego, bez dokonywania „prawdziwego” zatwierdzenia lub wpływania na historię repozytorium.
+
+W rzeczywistości karol powinnien był ukryć lub zatwierdzić zmiany, zanim spróbowały wyciągnąć. Ciągnięcie do „brudnego” działającego drzewa jest ryzykowne, ponieważ może robić rzeczy, z których nie można łatwo się wyleczyć.
+
+Użyj następującego polecenia, aby ukryć zmiany karola:
+
+:::{.callout appearance="minimal"}
+git stash
+:::
+
+Wyjście
+
+:::{.callout appearance="minimal"}
+Saved working directory and index state WIP on main: 4be13e8 wprowadzono odwolanie w plik test do dane.
+:::
+
+Teraz karol może bezpiecznie pociągnąć, po czym może „wyskoczyć” ze skrytki, która jest zorganizowana jako stos. (W rzeczywistości `git stash` jest to skrót od `git stash push`. To bardzo przypomina stos, na którym umieszczasz rachunki, których jeszcze nie zapłaciłeś.) Uruchom następujące polecenia:
+
+:::{.callout appearance="minimal"}
+git pull \
+git stash pop
+:::
+
+Otwarcie skrytki scala zmiany. Jeśli zmiany zachodzą na siebie, może wystąpić konflikt. Można to naprawić na podglądzie `snapshot`. 
+
+:::{.callout appearance="minimal"}
+git commit -a -m "nadpisz bob" \
+git push
+:::
+
+Teraz sprawdzimy czy karolowi udało się wprowadzić zmiany, i czy masz je pociągnąć do siebie. 
+
+:::{.callout appearance="minimal"}
+cd ../r_proj
+:::
+
+Teraz podglądnij pliki np. poleceniem `code ...`. Są takie jakie były, więc je zamykamy. Nie ma widocznych zmian, które wprowadził Karol. Spróbujemy je teraz sciągnąć.
+
+:::{.callout appearance="minimal"}
+git pull
+:::
+
+Powinieneś mieć zaaktualizowaną przez Karola wersję plików. Tylko Bob ma niekatualne repozytorium, więc teraz on również pobierze poprawne repo. 
+
+:::{.callout appearance="minimal"}
+cd ../Bob \
+git pull
+:::
+
+Jeśli chcesz, możesz pobrać swoje pliki, aby wyświetlić ich lokalny podgląd:
+
+:::{.callout appearance="minimal"}
+cd ..
+zip -r r_proj.zip r_proj
+download r_proj.zip
+:::
+
+## Podsumowanie 
+
+W tym module nauczyłeś się:
+
+* Jak sklonować repozytorium
+* Jak ukryć zmiany
+* Jak wypchnąć zmiany do repozytorium
+* Czym są pull requesty i jak je zainicjować
+* W tym momencie wiesz już wystarczająco dużo o Git, aby współpracować na kilka podstawowych sposobów, ale jest jeszcze wiele do nauczenia się!
+
+Jeśli chcesz kopać głębiej, oto kilka innych zasobów, które okażą się pomocne:

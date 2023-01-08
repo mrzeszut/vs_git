@@ -1,0 +1,297 @@
+---
+title: "Wprowadzenie do Git"
+author: Mateusz Rzeszutek
+date: today 
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    toc-location: right
+    toc-title: Spis Treści
+    number-sections: true
+    number-depth: 3
+    embed-resources: true
+    html-math-method: katex
+    code-tools: true
+    code-block-bg: true
+    code-fold: show
+    code-summary: "Show and hide code"
+    link-external-icon: true
+    link-external-newwindow: true
+    smooth-scroll: true
+    self-contained: true
+    citation: true
+    bibliography: D:\\Qnap\\dydaktyka\\1_dzienne\\Kurs_R_SPD\\Temat_1_konf\\moja_bib.bib
+    theme: 
+        dark: solar
+        light: flatly
+    fontsize: 1.0em
+    linestretch: 1.3
+    fig-align: center
+execute: 
+  echo: true
+  error: false
+  warning: false
+  output: true
+---
+
+<style type="text/css"> body {text-align: justify}  </style>
+
+## Wprowadzenie 
+
+W tym module zapoznasz się z wprowadzeniem do kontroli wersji i usługi [Git](git-scm.com). Narzędzie Git może wydawać się trochę tajemnicze na początku, a nawet może być frustrujące czasami. Ale jeśli nauczysz się go krok po kroku, przekonasz się, że istnieje powód, dla którego usługa Git szybko staje się najpopularniejszym na świecie systemem kontroli wersji — nie tylko dla deweloperów oprogramowania, ale także dla zespołów, które piszą dokumentację i współpracują nad innymi pracami.
+
+
+### Cele Szkolenia 
+
+ * Informacje o kontroli wersji
+ * Omówienie rozproszonych systemów kontroli wersji, takich jak usługa Git
+ * Rozpoznawanie różnic między systemem Git i usługą GitHub oraz rolami, które spełnią w cyklu życia tworzenia oprogramowania
+
+
+## System Kontroli Wersji 
+
+System kontroli wersji `(VCS)` to program lub zestaw programów śledzących zmiany w kolekcji plików. Jednym z celów VCS jest łatwe przywołanie wcześniejszych wersji pojedynczych plików lub całego projektu. Innym celem jest umożliwienie kilku członkom zespołu pracy nad projektem, nawet w tych samych plikach, jednocześnie bez wpływu na pracę nawzajem.
+
+Inną nazwą `VCS` jest system zarządzania konfiguracją oprogramowania `(SCM)`. Dwa terminy są często używane zamiennie — w rzeczywistości oficjalna dokumentacja usługi Git znajduje się w <git-scm.com>. Technicznie kontrola wersji jest tylko jedną z praktyk związanych z usługą `SCM`. VCS może służyć do projektów innych niż oprogramowanie, w tym książek i samouczków online.
+
+Za pomocą programu `VCS` można wykonywać następujące czynności:
+
+* Wyświetlanie wszystkich zmian wprowadzonych w projekcie, terminów ich wprowadzenia i autorów.
+* Dołącz komunikat z każdą zmianą, aby wyjaśnić przyczynę.
+* Pobierz wcześniejsze wersje całego projektu lub poszczególnych plików.
+* Tworzenie gałęzi `(branch)`, w których można eksperymentować ze zmianami. Ta funkcja umożliwia jednoczesne pracować nad kilkoma różnymi zestawami zmian (na przykład funkcjami lub poprawkami błędów), prawdopodobnie przez różne osoby bez wpływu na `main branch`. Później możesz scalić zmiany, które chcesz zachować z powrotem w "main branch".
+ * Dołącz tag do wersji — na przykład, aby oznaczyć nową wersję.
+
+Git to szybka, wszechstronna, wysoce skalowalna, bezpłatna, open source VCS. Jego głównym autorem jest Linus Torvalds, twórca systemu Linux.
+
+
+### Rozproszony system kontroli wersji
+*** 
+
+Wcześniejsze wersje VCS, CVS i Perforce, używały scentralizowanego serwera do przechowywania historii projektu. Ta centralizacja oznaczała, że jeden serwer był również potencjalnie pojedynczym punktem awarii.
+
+Usługa Git jest dystrybuowana, co oznacza, że kompletna historia projektu jest przechowywana zarówno na kliencie, jak i na serwerze. Pliki można edytować bez połączenia sieciowego, zaewidencjonować je lokalnie i zsynchronizować z serwerem, gdy połączenie będzie dostępne. Jeśli serwer ulegnie awarii, nadal będziesz mieć lokalną kopię projektu. Tak naprawdę nie trzeba nawet mieć serwera. Zmiany mogą być przekazywane w wiadomości e-mail lub udostępniane przy użyciu nośnika wymiennego, ale nikt nie używa usługi Git w ten sposób w praktyce.
+
+
+### Terminologia związana z usługą Git
+***
+Aby zrozumieć usługę Git, musisz poznać terminologię. Oto krótka lista terminów, z których często korzystają użytkownicy usługi Git. Na razie nie przejmuj się szczegółami; wszystkie te terminy staną się znane podczas wykonywania ćwiczeń w tym module.
+
+1) `Working tree:` zestaw zagnieżdżonych katalogów i plików zawierających projekt, nad którym pracujesz.
+
+2) `Repository (repo):` katalog znajdujący się na najwyższym poziomie drzewa roboczego, w którym usługa Git przechowuje całą historię i metadane projektu. Repozytorium często jest określane jako `repo`. Nagie repozytorium jest to repozytorium, które nie jest częścią `working tree`; służy do udostępniania lub tworzenia kopii zapasowych. Nagim repozytorium jest zwykle katalog o nazwie kończącej się ciągiem `.git` — na przykład `project.git`.
+
+3) `Hash:` liczba wygenerowana przez funkcję `hash` reprezentującą zawartość pliku lub innego obiektu jako stałą liczbę cyfr. Usługa Git używa `hash` o długości 160 bitów. Jedną z zalet korzystania ze `hash` jest to, że usługa Git może stwierdzić, czy plik został zmieniony, wyznaczając wartość `hash` jego zawartości i porównując wynik z poprzednim skrótem. Jeśli sygnatura czasowa i data pliku zostanie zmieniona, ale skrót pliku nie zostanie zmieniony, usługa Git wie, że zawartość pliku nie zostanie zmieniona.
+
+4) `Object`: repozytorium Git zawiera **cztery** typy obiektów, z których każdy jest jednoznacznie identyfikowany przez `SHA-1 hash`. 
+
+    * Obiekt `blob` zawiera zwykły plik. 
+    * Obiekt `tree` reprezentuje katalog i zawiera **nazwy**, **skróty** i **uprawnienia**. 
+    * Obiekt `commit` reprezentuje określoną wersję drzewa roboczego. 
+    * `Tag` jest nazwą dołączoną do zatwierdzenia.
+
+5) `commit:` w przypadku użycia jako czasownik zatwierdzenie oznacza utworzenie obiektu zatwierdzenia. Ta akcja wzięła swoją nazwę od zatwierdzania w bazie danych. Oznacza to, że zatwierdzasz wprowadzone zmiany, aby inni również mogli je zobaczyć.
+
+6) `branch`: jest serią połączonych zatwierdzeń **(commit)**. Najnowsze zatwierdzenie w gałęzi jest nazywane nagłówkiem **(head)**. Gałąź domyślna, która jest tworzona podczas inicjowania repozytorium, jest nazywana `main,` często nazwa `master` w usłudze Git. Nagłówek bieżącej gałęzi nosi nazwę `HEAD`. Gałęzie są niezwykle przydatną funkcją usługi Git, ponieważ umożliwiają deweloperom pracę niezależnie (lub razem) w gałęziach, a później scalanie ich zmian w gałęzi domyślnej.
+
+7) `remote`: jest to odwołanie do innego repozytorium Git. Podczas tworzenia repozytorium usługa Git tworzy zdalną nazwę `origin`, która jest domyślną zdalną funkcją operacji wypychania `pull` i ściągania `push`.
+
+8) `Commands, subcommands, and options`: operacje usługi Git są wykonywane przy użyciu poleceń, takich jak `git push` i `git pull`. `git` jest poleceniem, a `push` lub `pull` jest podpoleceniem. Podpolecenie określa operację, którą ma wykonać usługa Git. Polecenia często towarzyszą opcjom, które używają łączników `(-)`lub podwójnych łączników `(--)`. Na przykład `git reset --hard`.
+
+Te terminy i inne, takie jak push i pull, będą wkrótce bardziej zrozumiałe. Ale musisz gdzieś zacząć i może okazać się przydatne, aby wrócić i przejrzeć ten słownik terminów po zakończeniu modułu.
+
+
+### Wiersz poleceń usługi Git
+***
+Dla usługi Git jest dostępnych kilka różnych interfejsów użytkownika, w tym [GitHub Desktop](https://desktop.github.com/). Wiele edytorów programowania, takich jak [Microsoft Visual Studio Code](https://code.visualstudio.com/), ma również interfejs usługi Git. Wszystkie działają inaczej i mają różne ograniczenia. Żaden z nich nie obejmuje wszystkich funkcji usługi Git.
+
+W ćwiczeniach w tym module jest używany wiersz polecenia usługi Git. Interfejs wiersza polecenia usługi Git działa jednak tak samo, niezależnie od używanego systemu operacyjnego. Ponadto wiersz polecenia umożliwia korzystanie ze wszystkich funkcji usługi Git. Deweloperzy, którzy widzą usługę Git tylko za pośrednictwem graficznego interfejsu użytkownika, czasami znajdują się w konfrontacji z komunikatami o błędach, których nie mogą rozwiązać, i muszą uciekać się do wiersza polecenia, aby ponownie sprawdzić ustawienia.
+
+
+### Usługi Git i GitHub
+***
+Podczas pracy z usługą Git możesz się zastanawiać nad różnicami między oferowanymi przez nią funkcjami a funkcjami oferowanymi w usłudze GitHub.
+
+Jak wspomniano wcześniej, usługa Git jest rozproszonym systemem kontroli wersji (DVCS), którego wielu deweloperów i innych współautorów może używać do pracy nad projektem. Umożliwia pracę z co najmniej jedną lokalną gałęzią, a następnie wypychanie ich do repozytorium zdalnego.
+
+GitHub to platforma w chmurze, której podstawową technologią jest system Git. Usługa GitHub upraszcza proces współpracy nad projektami i udostępnia witrynę internetową, więcej narzędzi wiersza polecenia oraz ogólny przepływ, którego deweloperzy i użytkownicy mogą używać do współpracy. Usługa GitHub działa jako repozytorium zdalne wymienione wcześniej.
+
+Najważniejsze funkcje udostępniane przez usługę GitHub to:
+
+* Issues - Problemy
+* Discussions - Dyskusje
+* Pull requests - Żądania ściągnięcia
+* Notifications - Powiadomienia
+* Labels - Etykiety
+* Actions - Akcje
+* Forks Widelce - rowerowe
+ *Projects - Projekty
+
+
+## Start z Git
+
+Możesz otworzyć terminal `git bash` in `VS code`. Załów projekt w dowolnym folderze. niech ściezka będzie krótka. Możesz pracować również niezależnie. Ważnym jest byś miał zainstalwoany git na swoim komputerze lub orzynajmiej wersje portable. Możesz też z menu windows wybrać `git bash`.
+
+1) Najpierw sprawdzimy wersję Git:
+
+:::{.callout appearance="minimal"}
+git --version \
+git -v          # alternatywnie
+:::
+
+2) Aby skonfigurować Git, musisz zdefiniować kilka zmiennych globalnych: `user.name` i `user.email`. Obie są wymagane, abyś mógł dokonać zatwierdzenia. Ustaw swoją nazwę w `git bash` za pomocą następującego polecenia. Zastąp <USER_NAME>nazwą użytkownika, której chcesz użyć.
+
+:::{.callout-note appearance="simple"}
+Podaj ten sam e-mail co przy logowaniu do konta github. 
+:::
+
+:::{.callout appearance="minimal"}
+git config --global user.name "USER_NAME"
+:::
+
+3) Teraz użyj tego polecenia, aby utworzyć user.emailzmienną konfiguracyjną, zastępując <USER_EMAIL>ją swoim adresem e-mail:
+
+:::{.callout appearance="minimal"}
+git config --global user.email "USER_EMAIL"
+:::
+
+4) Potwierdź, że dane wyjściowe zawierają dwa wiersze, które są podobne do poniższego przykładu. Twoje imię i nazwisko oraz adres e-mail będą inne niż w przykładzie
+
+:::{.callout appearance="minimal"}
+git config --global user.name \
+git config --global user.email
+:::
+
+
+### Skonfiguruj swoje repozytorium Git
+***
+
+Git działa poprzez sprawdzanie zmian w plikach w określonym folderze. Stworzymy folder, który będzie służył jako nasze drzewo robocze (katalog projektu) i poinformujemy o tym Git, aby mógł rozpocząć śledzenie zmian. Mówimy Gitowi, aby zaczął śledzić zmiany, inicjując repozytorium Git w tym folderze.
+
+Zacznij od utworzenia pustego folderu dla swojego projektu, a następnie zainicjuj w nim repozytorium Git.
+
+
+1) Utwórz folder o nazwie Koty. Ten folder będzie katalogiem projektu, zwanym także `working tree`. Katalog projektu to miejsce, w którym przechowywane są wszystkie pliki związane z twoim projektem. 
+
+:::{.callout appearance="minimal"}
+mkdir cats
+:::
+
+2) Przejdź do katalogu projektu za pomocą cdpolecenia:
+
+:::{.callout appearance="minimal"}
+cd cats
+:::
+
+Teraz zainicjuj nowe repozytorium i ustaw nazwę domyślnej gałęzi na main:
+Jeśli korzystasz z Git w wersji 2.28.0 lub nowszej, użyj następujących poleceń:
+
+:::{.callout appearance="minimal"}
+git init --initial-branch=main \
+git init -b main
+:::
+
+Teraz użyj `git status` polecenia, aby pokazać stan działającego drzewa. Powinieneś 
+
+:::{.callout appearance="minimal"}
+git status
+:::
+
+Git odpowiada tym wyjściem, które wskazuje, że `master` jest to bieżąca gałąź `(branch)`. Jest to również jedyna gałąź.
+
+:::{.callout appearance="minimal"}
+On branch main
+
+No commits yet
+
+nothing to commit (create/copy files and use "git add" to track)
+:::
+
+Użyj `ls` polecenia, aby wyświetlić zawartość drzewa roboczego:
+
+:::{.callout appearance="minimal"}
+ls -a
+:::
+
+Opcja `-a` pozwala wyświetlić ukryte pliki. 
+
+`.git` folder to repozytorium Git, w którym Git przechowuje metadane i historię drzewa roboczego. Zwykle nie robisz nic bezpośrednio z katalogiem `.git`. Git aktualizuje tam metadane, gdy zmienia się status `working teee`, aby śledzić zmiany w twoich plikach. Ten katalog jest dla Ciebie praktyczny, ale jest niezwykle ważny dla Gita.
+
+
+### System pomocy 
+***
+
+Git, podobnie jak większość narzędzi wiersza poleceń, ma wbudowaną funkcję pomocy, za pomocą której można wyszukiwać polecenia i słowa kluczowe. Wpisz następujące polecenie, aby uzyskać pomoc dotyczącą tego, co możesz zrobić z Git:
+
+:::{.callout appearance="minimal"}
+git --help \
+git -h        # alternatywnie
+:::
+
+Przeczytaj różne opcje dostępne w Git i zwróć uwagę, że każde polecenie ma własną stronę pomocy, gdy zaczniesz kopać głębiej. Nie wszystkie te polecenia będą jeszcze miały sens, ale niektóre mogą wyglądać znajomo, jeśli masz doświadczenie w korzystaniu z VCS.
+
+:::{.callout appearance="minimal"}
+git -h config
+:::
+
+:::{.callout-tip appearance="simple"}
+
+**Możesz podejrzeć plik konfiguracji w notatniku:**
+
+notepad .git/config
+
+**Alternatywnie notepad ++**
+
+start notepad++ .git/config
+:::
+
+## Podstawowe polecenia Gita
+
+Git działa poprzez zapamiętywanie zmian w twoich plikach, tak jakby robił migawki `snapshot` twojego systemu plików. Omówimy kilka podstawowych poleceń, aby rozpocząć śledzenie plików w repozytorium. Następnie zapiszesz swoją pierwszą „snapshot”, aby Git mógł ją porównać.
+
+***
+**git status**
+Pierwszym i najczęściej używanym poleceniem Gita jest `git status`. Użyłeś go już raz, w poprzednim ćwiczeniu, aby sprawdzić, czy poprawnie zainicjowałeś repozytorium Git. `git status` wyświetla stan drzewa roboczego (oraz obszaru przejściowego — wkrótce porozmawiamy więcej o obszarze przejściowym). Pozwala zobaczyć, które zmiany są aktualnie śledzone przez Git, więc możesz zdecydować, czy chcesz poprosić Git o zrobienie kolejnej migawki.
+
+***
+**git add**
+`git add` to polecenie, którego używasz, aby powiedzieć Gitowi, aby zaczął śledzić zmiany w określonych plikach. Termin techniczny **inscenizuje te zmiany**. Użyjesz git add do przygotowania zmian, aby przygotować się do zatwierdzenia. Wszystkie zmiany w plikach, które zostały dodane, ale nie zostały jeszcze zatwierdzone, są przechowywane w obszarze przejściowym.
+
+***
+**git commit**
+Po przygotowaniu niektórych zmian do zatwierdzenia możesz zapisać swoją pracę w migawce, wywołując `git commit` polecenie. `Commit` jest zarówno czasownikiem, jak i rzeczownikiem. Ma to zasadniczo takie samo znaczenie, jak w przypadku zatwierdzenia planu lub zatwierdzenia zmiany w bazie danych. Jako czasownik, zatwierdzanie zmian oznacza umieszczenie kopii (pliku, katalogu lub innych „rzeczy”) w repozytorium jako nowej wersji. Jako rzeczownik, zatwierdzenie to mały fragment danych, który nadaje wprowadzonym zmianom unikalną tożsamość. Dane zapisywane w zatwierdzeniu obejmują nazwisko i adres e-mail autora, datę, komentarze dotyczące tego, co zrobiłeś (i dlaczego), opcjonalny podpis cyfrowy oraz unikalny identyfikator poprzedniego zatwierdzenia.
+
+***
+**git log**
+Polecenie `git log` pozwala zobaczyć informacje o poprzednich zatwierdzeniach. Do każdego zatwierdzenia dołączona jest wiadomość (komunikat zatwierdzenia), a git logpolecenie wyświetla informacje o najnowszych zatwierdzeniach, takie jak ich znacznik czasu, autor i komunikat zatwierdzenia. To polecenie pomaga śledzić, co robiłeś i jakie zmiany zostały zapisane.
+
+***
+**help**
+Wypróbowałeś już to `git help` polecenie, ale warto o nim przypomnieć. Użyj tego polecenia, aby łatwo uzyskać informacje o wszystkich poleceniach, których nauczyłeś się do tej pory, i nie tylko.
+
+
+## Podsumowanie
+
+W tym module poznałeś podstawy korzystania z Git. Nauczyłeś się:
+
+* Przegląd systemów kontroli wersji (VCS)
+* Ważna terminologia Gita.
+* Różnice między Gitem a GitHubem.
+* Jak skonfigurować Gita.
+* Kilka podstawowych poleceń Gita.
+
+W tym momencie wiesz wystarczająco dużo o Gicie, aby samodzielnie używać kontroli wersji w podstawowym projekcie. Kontrola wersji błyszczy we współpracy z innymi programistami. Sprawdź inne moduły w tej ścieżce szkoleniowej, aby dowiedzieć się więcej o używaniu Git z innymi!
+
+
+**Zasoby dodatkowe**
+
+[Pro Git](https://git-scm.com/book/en/v2)
+
+[https://docs.github.com/en/get-started/quickstart/git-and-github-learning-resources](https://docs.github.com/en/get-started/quickstart/git-and-github-learning-resources)
+
+:::{.callout appearance="minimal"}
+git help tutorial \
+git help tutorial-2 \
+git help every
+:::
