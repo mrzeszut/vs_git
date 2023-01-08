@@ -140,7 +140,7 @@ git --version \
 git -v          # alternatywnie
 :::
 
-2) Aby skonfigurować Git, musisz zdefiniować kilka zmiennych globalnych: `user.name` i `user.email`. Obie są wymagane, abyś mógł dokonać zatwierdzenia. Ustaw swoją nazwę w Cloud Shell za pomocą następującego polecenia. Zastąp <USER_NAME>nazwą użytkownika, której chcesz użyć.
+2) Aby skonfigurować Git, musisz zdefiniować kilka zmiennych globalnych: `user.name` i `user.email`. Obie są wymagane, abyś mógł dokonać zatwierdzenia. Ustaw swoją nazwę w `git bash` za pomocą następującego polecenia. Zastąp <USER_NAME>nazwą użytkownika, której chcesz użyć.
 
 :::{.callout-note appearance="simple"}
 Podaj ten sam e-mail co przy logowaniu do konta github. 
@@ -250,46 +250,48 @@ start notepad++ .git/config
 
 Git działa poprzez zapamiętywanie zmian w twoich plikach, tak jakby robił migawki `snapshot` twojego systemu plików. Omówimy kilka podstawowych poleceń, aby rozpocząć śledzenie plików w repozytorium. Następnie zapiszesz swoją pierwszą „snapshot”, aby Git mógł ją porównać.
 
-**status gita**
-
+***
+**git status**
 Pierwszym i najczęściej używanym poleceniem Gita jest `git status`. Użyłeś go już raz, w poprzednim ćwiczeniu, aby sprawdzić, czy poprawnie zainicjowałeś repozytorium Git. `git status` wyświetla stan drzewa roboczego (oraz obszaru przejściowego — wkrótce porozmawiamy więcej o obszarze przejściowym). Pozwala zobaczyć, które zmiany są aktualnie śledzone przez Git, więc możesz zdecydować, czy chcesz poprosić Git o zrobienie kolejnej migawki.
 
-git dodaj
-git addto polecenie, którego używasz, aby powiedzieć Gitowi, aby zaczął śledzić zmiany w określonych plikach.
+***
+**git add**
+`git add` to polecenie, którego używasz, aby powiedzieć Gitowi, aby zaczął śledzić zmiany w określonych plikach. Termin techniczny **inscenizuje te zmiany**. Użyjesz git add do przygotowania zmian, aby przygotować się do zatwierdzenia. Wszystkie zmiany w plikach, które zostały dodane, ale nie zostały jeszcze zatwierdzone, są przechowywane w obszarze przejściowym.
 
-Termin techniczny inscenizuje te zmiany. Użyjesz git adddo przygotowania zmian, aby przygotować się do zatwierdzenia. Wszystkie zmiany w plikach, które zostały dodane, ale nie zostały jeszcze zatwierdzone, są przechowywane w obszarze przejściowym .
+***
+**git commit**
+Po przygotowaniu niektórych zmian do zatwierdzenia możesz zapisać swoją pracę w migawce, wywołując `git commit` polecenie. `Commit` jest zarówno czasownikiem, jak i rzeczownikiem. Ma to zasadniczo takie samo znaczenie, jak w przypadku zatwierdzenia planu lub zatwierdzenia zmiany w bazie danych. Jako czasownik, zatwierdzanie zmian oznacza umieszczenie kopii (pliku, katalogu lub innych „rzeczy”) w repozytorium jako nowej wersji. Jako rzeczownik, zatwierdzenie to mały fragment danych, który nadaje wprowadzonym zmianom unikalną tożsamość. Dane zapisywane w zatwierdzeniu obejmują nazwisko i adres e-mail autora, datę, komentarze dotyczące tego, co zrobiłeś (i dlaczego), opcjonalny podpis cyfrowy oraz unikalny identyfikator poprzedniego zatwierdzenia.
 
-git zatwierdzenie
-Po przygotowaniu niektórych zmian do zatwierdzenia możesz zapisać swoją pracę w migawce, wywołując git commitpolecenie.
+***
+**git log**
+Polecenie `git log` pozwala zobaczyć informacje o poprzednich zatwierdzeniach. Do każdego zatwierdzenia dołączona jest wiadomość (komunikat zatwierdzenia), a git logpolecenie wyświetla informacje o najnowszych zatwierdzeniach, takie jak ich znacznik czasu, autor i komunikat zatwierdzenia. To polecenie pomaga śledzić, co robiłeś i jakie zmiany zostały zapisane.
 
-Commit jest zarówno czasownikiem, jak i rzeczownikiem. Ma to zasadniczo takie samo znaczenie, jak w przypadku zatwierdzenia planu lub zatwierdzenia zmiany w bazie danych. Jako czasownik, zatwierdzanie zmian oznacza umieszczenie kopii (pliku, katalogu lub innych „rzeczy”) w repozytorium jako nowej wersji. Jako rzeczownik, zatwierdzenie to mały fragment danych, który nadaje wprowadzonym zmianom unikalną tożsamość. Dane zapisywane w zatwierdzeniu obejmują nazwisko i adres e-mail autora, datę, komentarze dotyczące tego, co zrobiłeś (i dlaczego), opcjonalny podpis cyfrowy oraz unikalny identyfikator poprzedniego zatwierdzenia.
-
-dziennik git
-Polecenie git logpozwala zobaczyć informacje o poprzednich zatwierdzeniach. Do każdego zatwierdzenia dołączona jest wiadomość (komunikat zatwierdzenia), a git logpolecenie wyświetla informacje o najnowszych zatwierdzeniach, takie jak ich znacznik czasu, autor i komunikat zatwierdzenia. To polecenie pomaga śledzić, co robiłeś i jakie zmiany zostały zapisane.
-
-pomóż
-Wypróbowałeś już to git helppolecenie, ale warto o nim przypomnieć. Użyj tego polecenia, aby łatwo uzyskać informacje o wszystkich poleceniach, których nauczyłeś się do tej pory, i nie tylko.
-
-Pamiętaj, że każde polecenie ma również własną stronę pomocy. Te strony pomocy można znaleźć, wpisując git <command> --help. Na przykład git commit --helpwyświetla stronę, która zawiera więcej informacji o git commitpoleceniu i sposobie jego używania.
+***
+**help**
+Wypróbowałeś już to `git help` polecenie, ale warto o nim przypomnieć. Użyj tego polecenia, aby łatwo uzyskać informacje o wszystkich poleceniach, których nauczyłeś się do tej pory, i nie tylko.
 
 
+## Podsumowanie
+
+W tym module poznałeś podstawy korzystania z Git. Nauczyłeś się:
+
+* Przegląd systemów kontroli wersji (VCS)
+* Ważna terminologia Gita.
+* Różnice między Gitem a GitHubem.
+* Jak skonfigurować Gita.
+* Kilka podstawowych poleceń Gita.
+
+W tym momencie wiesz wystarczająco dużo o Gicie, aby samodzielnie używać kontroli wersji w podstawowym projekcie. Kontrola wersji błyszczy we współpracy z innymi programistami. Sprawdź inne moduły w tej ścieżce szkoleniowej, aby dowiedzieć się więcej o używaniu Git z innymi!
+
+
+**Zasoby dodatkowe**
+
+[Pro Git](https://git-scm.com/book/en/v2)
+
+[https://docs.github.com/en/get-started/quickstart/git-and-github-learning-resources](https://docs.github.com/en/get-started/quickstart/git-and-github-learning-resources)
 
 :::{.callout appearance="minimal"}
-:::
-
-
-
-:::{.callout appearance="minimal"}
-:::
-
-
-:::{.callout appearance="minimal"}
-:::
-
-
-:::{.callout appearance="minimal"}
-:::
-
-
-:::{.callout appearance="minimal"}
+git help tutorial \
+git help tutorial-2 \
+git help every
 :::
