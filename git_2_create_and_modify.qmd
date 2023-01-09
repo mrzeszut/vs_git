@@ -63,19 +63,18 @@ Git niewiele robi z pustymi katalogami, więc dodajmy plik do `tree`.
 
 Upewnij się, że sesja jest nadal aktywna i że znajdujesz się w folderze repozytorium o nazwie Cats.
 
-Użyj `touch` polecenia, aby utworzyć plik o nazwie `skrypt.r`. Poleceniem git `status` sprawdź, co się dzieje. Git odpowiada, informując, że nic nie zostało zatwierdzone, ale katalog zawiera nowy plik. 
+Użyj `touch` polecenia, aby utworzyć plik o nazwie `skrypt.r`. Poleceniem git `status` sprawdź, co się dzieje. Git odpowiada, informując, że nic nie zostało zatwierdzone, ale katalog zawiera nowy plik. Czasami, gdy jest dużo zmian warto w pierwszje kolejnosci skorzystać z `git status -s`
 
 Następnie użyj `git add .`, który rozpocznie śledzenie zmian w pliku. Uwaga `.` oznacza indeksowanie `all file` w twoim `working tree`. Ponów `git status` i sprawdźć odpowidźć.
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 touch skrypt.r 
-
-git status 
-
+git status
+git status -s 
 git add . 
-
 git status 
-:::
+```
 
 Zamiast używać `git add .`, mogłeś użyć , git add `skrypt.r` ponieważ plik ten był jedynym nowym plikiem w katalogu. Ale gdyby dodano kilka plików, `git add .pokryłoby` je wszystkie.
 
@@ -84,11 +83,12 @@ Zamiast używać `git add .`, mogłeś użyć , git add `skrypt.r` ponieważ pli
 
 Teraz, gdy plik skrypt.r został dodany do indeksu, następnym krokiem jest zatwierdzenie go 'commit'. Flaga `-m` w tym poleceniu mówi Gitowi, że przekazujesz również wiadomość wraz z zatwierdzeniem `"utworzono nowy ..."`.
 
-:::{.callout appearance="minimal"}
-git commit skrypt.r -m "utworzono nowy pusty plik" \
-git status \
-git log \
-:::
+```{bash}
+#| eval: false
+git commit skrypt.r -m "utworzono nowy pusty plik"
+git status
+git log 
+```
 
 :::{.callout-tip appearance="simple"}
 Istnieje wiele różnych sposobów formułowania komunikatów zatwierdzenia, ale dobrą wskazówką jest napisanie pierwszego wiersza w taki sposób, aby mówił, co zatwierdzenie robi z drzewem . Powszechne jest również pisanie pierwszej litery wielką literą i pomijanie kropki zamykającej, aby zaoszczędzić miejsce. Wyobraź sobie, że pierwsza linia wiadomości kończy zdanie zaczynające się od „Po naciśnięciu, to zatwierdzenie spowoduje…”
@@ -105,11 +105,12 @@ Może to zrobić na kilka sposobów. Jeśli masz otwarty terminal `git bash` w V
 
 Mozesz użyć innego edytora. np. z poziomu terminala wskazac konkretny edytor np.:
 
-:::{.callout appearance="minimal"}
-code skrypt.r \
-start notepad++ skrypt.r \
+```{bash}
+#| eval: false
+code skrypt.r
+start notepad++ skrypt.r 
 notepad skrypt.r
-:::
+```
 
 Teraz możesz zmodyfikować plik `skrypt.r` wpisując dowolne polecenie wykonywane przez R i zapisać plik. np.:
 
@@ -135,9 +136,10 @@ print(data.frame(a, b, new_f(a = a, b = b)))
 
 Zapisz plik. Poleceniem `git status` sprawdź stan repozytorium. `-a` - zatwierdza zmiany w `all file` w `working tree`
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 git commit -a -m "nowa funkcja"
-:::
+```
 
 Zauważ, że tym razem nie uruchomiliśmy `git add` polecenia, aby wprowadzić zmiany. Zamiast tego użyliśmy `-a` flagi w git commitpoleceniu. Opcja `-a` dodaje wszystkie pliki, które zmodyfikowałeś od ostatniego zatwierdzenia. Nie doda nowych plików. Aby dodać nowe pliki, nadal potrzebujesz rozszerzenia `git add`.
 
@@ -145,10 +147,11 @@ Zmiana w pliku `skrypt.r` została zatwierdzona. W repozytorium znajdują się t
 
 Ponownie wykonaj polecenia w celu sprawdzenia stanu repozytorium: 
 
-:::{.callout appearance="minimal"}
-git status \
+```{bash}
+#| eval: false
+git status 
 git log
-:::
+```
 
 Przetestuj swój skryp w terminalu `cmd`. Otwórz `r` lub `rStudio`. Uruchom polecenie: `source("path/skrypt.r")` - gdzie path - to ścieżka dostępu do pliku.  
 
@@ -164,11 +167,12 @@ Podczas pracy nad projektem Git pomaga śledzić wprowadzane zmiany. Pozwala tak
 ***
 Ponownie otwórz plik:
 
-:::{.callout appearance="minimal"}
-code skrypt.r  # z poziomu vs code w terminalu vs code \
-start notepad++ skrypt.r # z poziomu git bash w notepad++\
+```{bash}
+#| eval: false
+code skrypt.r  # z poziomu vs code w terminalu vs code 
+start notepad++ skrypt.r # z poziomu git bash w notepad++
 notepad skrypt.r # z poziomu git bash w notatniku 
-:::
+```
 
 W prowadź zmiany w pliku `skrypt.r`. Upewnij się, że masz zainstalwoane pakiety, których używamy.
 
@@ -201,9 +205,10 @@ data.frame(a, b, x) %>%
 
 Uruchom polecenie `git diff`:
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 git diff
-:::
+```
 
 Przed dodanymi wierszami pojawia się znak `plus`, a znak `minus` oznacza wiersze, które zostały usunięte.
 
@@ -213,32 +218,38 @@ Jeśli polecenie nie powraca do monitu po wykonaniu, wprowadź, `q` aby wyjść 
 
 Następnie zatwierdź zmianę. Zamiast używać `-a` flagi, możesz jawnie nazwać plik, który ma zostać umieszczony i zatwierdzony, jeśli Git ma już plik w indeksie(`commit` polecenie szuka tylko istnienia pliku).
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 git commit -m "poprawki kodu" skrypt.r
-:::
+```
 
 Użyj `git diff` ponownie, aby porównać drzewo robocze z indeksem:
 
-:::{.callout appearance="minimal"}
-git diff
-:::
+```{bash}
+#| eval: false
+git diff --staged # porównuje zmiany  zostatnim commit
+```
 
 Tym razem `git diff` nie generuje danych wyjściowych, ponieważ `working tree`, indeks i `HEAD` wszystkie są zgodne. Możesz wykonać ponownie polecenia `git status` i `git log` i zobaczyć co sie stało. 
+
+Można również dodać git diff -stahh
 
 Załóżmy, że mamy błąd w funkcji i zamias `a^2` miało być `a^b`. Jeśli użyłeś wbudowanego edytora kodu za pomocą `code` polecenia, nie zobaczysz niczego niezwykłego. Ale jeśli zdarzyło ci się użyć innego edytora, w tym edytora o nazwie `sed`, edytor prawdopodobnie utworzył plik `skrypt.r.bak`, którego nie chcesz zatwierdzać. Edytorzy tacy jak `Vim` i `Emacs` tworzą pliki kopii zapasowych o takich samych nazwach.
 
 Użyj następującego polecenia, aby utworzyć i otworzyć plik o nazwie `.gitignore` we wbudowanym edytorze kodu:
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 code .gitignore 
-:::
+```
 
 Dodaj następujące wiersze do pliku:
 
-:::{.callout appearance="minimal"}
-*.bak \
+```{bash}
+#| eval: false
+*.bak
 *~
-:::
+```
 
 Ta linia instruuje `Git`, aby ignorował pliki, których nazwy kończą się na `.bak` lub `~`.
 
@@ -248,11 +259,12 @@ Ta linia instruuje `Git`, aby ignorował pliki, których nazwy kończą się na 
 
 Zapisz i zamknij edytor, a następnie użyj tych poleceń, aby zatwierdzić zmiany:
 
-:::{.callout appearance="minimal"}
-git add -A \
-git commit -m "zmodyfikowano plik .gitignore" \
+```{bash}
+#| eval: false
+git add -A
+git commit -m "zmodyfikowano plik .gitignore"
 git diff HEAD^ 
-:::
+```
 
 W tym przykładzie użyto `-A` opcji  `git add` w celu dodania wszystkich nieśledzonych (i nieignorowanych) plików oraz plików, które uległy zmianie, do plików, które już znajdują się pod kontrolą Git.
 
@@ -264,9 +276,10 @@ Jeśli zrobisz to `git diff` teraz, dane wyjściowe będą puste, ponieważ zmia
 
 Rozpocznij od utworzenia podkatalogu o nazwie `dane` w katalogu projektu:
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 mkdir dane
-:::
+```
 
 Następnie wykonaj `git status`: Dlaczego Git informuje, że nie ma nic do zatwierdzenia?
 
@@ -276,10 +289,11 @@ Czasami, szczególnie na początkowych etapach rozwoju, chcesz mieć puste katal
 
 Użyj następujących poleceń, aby utworzyć pusty plik o tej nazwie w podkatalogu `dane` i dodać zawartość podkatalogu do indeksu:
 
-:::{.callout appearance="minimal"}
-touch dane/.git-keep \
+```{bash}
+#| eval: false
+touch dane/.git-keep
 git add dane
-:::
+```
 
 Kontynuuj, używając `git status` ponownie, aby sprawdzić stan repozytorium. Potwierdź, że zgłasza jeden nowy plik.
 
@@ -289,17 +303,17 @@ Kontynuuj, używając `git status` ponownie, aby sprawdzić stan repozytorium. P
 
 Teraz zastąpmy `.git-keep` plikiem, który będzie testował naszą funkcję. I utworzymy nowy plik. 
 
-:::{.callout appearance="minimal"}
-rm dane/.git-keep \
-cd dane \
+```{bash}
+#| eval: false
+rm dane/.git-keep 
+cd dane 
 code new.r
-:::
+```
 
 Wprowadźć zmiany w plikach. Jeden posłużył do napisania funkcji, a drugi do testowania. Jest to typowy zabieg pozwalajacy ograniczyć liczbę kodu w głownym dokumencie. 
 
 ```{r}
 #| eval: false
-# Skrypt.r
 # Funkcja
 new_f <- function(a, b) {
     
@@ -314,7 +328,6 @@ new_f <- function(a, b) {
 
 ```{r}
 #| eval: false
-# new.r
 # Pakiety 
 library(knitr)
 library(tidyverse)
@@ -334,13 +347,14 @@ data.frame(a, b, x) %>%
 
 Użyj `git status`, aby wyświetlić podsumowanie plików, które zostały zmienione. Następnie użyj następujących poleceń, aby przenieść nieśledzone pliki do kontroli wersji i zatwierdzić zmiany.
 
-:::{.callout appearance="minimal"}
-git status \
-git add . \
-git status \
-git diff HEAD^ \
+```{bash}
+#| eval: false
+git status
+git add .
+git status
+git diff HEAD^ 
 git commit -a -m "dodano plik testowania funkcji"
-:::
+```
 
 `-a` - wprwadzi zmiany w obydwu śledzonych plikach `skrypt.r` i `new.r`
 
@@ -354,13 +368,15 @@ Teraz, gdy masz zarejestrowaną rozsądną liczbę zmian, możesz je `git log` p
 
 Użyj następującego polecenia, aby przejrzeć wszystkie swoje zatwierdzenia:
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 git log
-:::
+```
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 git log --oneline
-:::
+```
 
 Sprawdź ponownie wyjście. Tym razem powinno to wyglądać znacznie prościej:
 
@@ -382,9 +398,10 @@ W poprzednim ćwiczeniu zaktualizowałeś plik `new.r` i `skryp.r`, ale zapomnia
 
 Tak więc aktualizujesz pliki. W tym momencie możesz po prostu zatwierdzić poprawioną wersję, ale zamiast tego wolisz umieścić ją w tym samym zatwierdzeniu, co oryginał. Opcja `--amend` pozwala git commit zmienić historię (a jak często ma się szansę na zmianę historii).
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 git commit --amend --no-edit
-:::
+```
 
 Opcja `--no-edit` mówi Gitowi, aby dokonał zmiany bez zmiany komunikatu zatwierdzenia. Możesz także użyć `--amend` do edycji wiadomości zatwierdzenia, dodania plików, które zostały przypadkowo pominięte w zatwierdzeniu, lub do usunięcia plików, które zostały dodane przez pomyłkę.
 
@@ -402,9 +419,10 @@ Wyobraź sobie, że dokonałeś zmiany w pliku kodu źródłowego, która zepsu�
 
 Jeśli przypadkowo usunąłeś plik, możesz go odzyskać, przenosząc wersję z `indeksu` z powrotem do `working tree` za pomocą tego polecenia:
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 git checkout -- "file_name"
-:::
+```
 
 Możesz także wyewidencjonować plik z wcześniejszego zatwierdzenia (zwykle jest to głowa innej gałęzi), ale domyślnie plik jest pobierany z indeksu. Na liście argumentów `--` służy do oddzielenia zatwierdzenia od listy ścieżek plików. W tym przypadku nie jest to bezwzględnie potrzebne, ale gdybyś miał gałąź o nazwie `nazwa_pliku` (być może dlatego, że jest to nazwa pliku, nad którym pracuje się w tej gałęzi), zapobiegłoby to `--` pomieszaniu Gita.
 
@@ -418,23 +436,26 @@ Możesz także usunąć plik za pomocą `git rm`. To polecenie usuwa plik z dysk
 
 Więc jeśli uruchomiłeś to polecenie:
 
-:::{.callout appearance="minimal"}
-git rm skrypt.r \
+```{bash}
+#| eval: false
+git rm skrypt.r
 git checkout -- skrypt.r
-:::
+```
 
 Git niechętnie odtworzy plik index.html ! Zamiast tego pojawiłby się błąd podobny do tego przykładu:
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 error: pathspec 'skrypt.r' did not match any file(s) known to git.
-:::
+```
 
 Aby odzyskać `skrypt.r`, musielibyśmy użyć innej techniki: `git reset`. Możesz użyć `git reset` do wycofania zmian. Możesz odzyskać plik `skrypt.r` za pomocą tych dwóch poleceń:
 
-:::{.callout appearance="minimal"}
-git reset HEAD skrypt.r \
+```{bash}
+#| eval: false
+git reset HEAD skrypt.r
 git checkout -- skrypt.r
-:::
+```
 
 Tutaj `git reset` anuluje usuwanie pliku z Git. To polecenie przywraca plik do indeksu, ale plik jest nadal usunięty z dysku. Następnie możesz przywrócić go na dysk z indeksu, używając `git checkout`.
 
@@ -451,9 +472,10 @@ Możemy użyć `git revert HEAD` do wykonania zatwierdzenia, które jest dokład
 
 Nawiasem mówiąc, możesz również usunąć najnowsze zatwierdzenie za pomocą `git reset` polecenia:
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 git reset --hard HEAD^
-:::
+```
 
 Git oferuje kilka rodzajów resetów. Wartością domyślną jest `--mixed`, która resetuje indeks, ale nie drzewo robocze; przesuwa również `HEAD`, jeśli określisz inne zatwierdzenie. Opcja `--soft` porusza się `HEAD` tylko i pozostawia bez zmian zarówno indeks, jak i drzewo robocze. Ta opcja pozostawia wszystkie zmiany jako „zmiany do zatwierdzenia”, jak `git status` by to ująć. Reset zmienia zarówno indeks , `--hard` jak i `working tree`, aby pasowały do określonego zatwierdzenia; wszelkie zmiany wprowadzone w śledzonych plikach zostaną odrzucone.
 
@@ -465,26 +487,28 @@ Git oferuje kilka rodzajów resetów. Wartością domyślną jest `--mixed`, kt�
 
 Wykonaj poniższe polecenia i sprawdźć co się dzieje w folderze cats, który jest `working tree`.
 
-:::{.callout appearance="minimal"}
-rm skrypt.r \
-ls \
-git checkout -- skrypt.r \
+```{bash}
+#| eval: false
+rm skrypt.r
 ls
-:::
+git checkout -- skrypt.r
+ls
+```
 
 ### Odzyskiwanie usuniętego pliku: git rm
 ***
 
 Jeśli chcesz odzyskać usunięte pliki, sprawy są nieco bardziej skomplikowane, jeśli usuniesz je za pomocą `git rm` zamiast za pomocą `rm`.
 
-:::{.callout appearance="minimal"}
-git rm skrypt.r \
-git checkout -- skrypt.r \
-ls \
-git reset HEAD skrypt.r \
-git checkout -- skrypt.r \
+```{bash}
+#| eval: false
+git rm skrypt.r
+git checkout -- skrypt.r
 ls
-:::
+git reset HEAD skrypt.r 
+git checkout -- skrypt.r 
+ls
+```
 
 ### Cofnij commit
 ***
@@ -495,9 +519,10 @@ Jednym z rozwiązań tego problemu jest cofnięcie poprzedniego zatwierdzenia.
 
 Wykonaj polecenie:
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 code skrypt.r
-:::
+```
 
 Zmodyfikuj kod i zapisz plik:
 
@@ -516,19 +541,21 @@ new_f <- function(a, b) {
 
 Użyj tych poleceń, aby zatwierdzić zmiany i wyświetlić najnowsze zatwierdzenie:
 
-:::{.callout appearance="minimal"}
-git commit -m "error" skrypt.r \
+```{bash}
+#| eval: false
+git commit -m "error" skrypt.r
 git log -n1 --oneline
-:::
+```
 
 Flaga `-n1` tutaj mówi Gitowi, że chcemy tylko najnowszego wpisu zatwierdzenia.
 
 Użyj następujących poleceń, aby spróbować przywrócić plik index.html :
 
-:::{.callout appearance="minimal"}
-git checkout -- skrypt.r \
+```{bash}
+#| eval: false
+git checkout -- skrypt.r
 code skrypt.r
-:::
+```
 
 Czy coś się zmieniło? 
 
@@ -536,11 +563,12 @@ W tej sytuacji najlepszym sposobem działania jest cofnięcie zmiany poprzez wyk
 
 Zamknij plik i użyj `git revert`, aby cofnąć zatwierdzone zmiany. Kontynuuj `git log` polecenie, aby pokazać ostatnie zatwierdzenie. Na koniec otwórz plik `skrypt.r`, aby upewnić się, że zawartość jest poprawna.
 
-:::{.callout appearance="minimal"}
-git revert --no-edit HEAD \
-git log -n4 --oneline \
+```{bash}
+#| eval: false
+git revert --no-edit HEAD
+git log -n4 --oneline
 code skrypt.r
-:::
+```
 
 Przywracanie nie jest jedynym sposobem na zaradzenie tej sytuacji; możesz po prostu edytować plik i zatwierdzić poprawiony plik. Ta opcja jest trudniejsza, jeśli wprowadzone zmiany były rozległe. W każdym razie git revert jest to dobry sposób na zasygnalizowanie swojego zamiaru.
 

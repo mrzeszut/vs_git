@@ -96,13 +96,9 @@ Zanim zainstalujesz rozszerzenie dokłądnie przeczytaj co ono robi. Z reguły j
 
 ## Dodatkowa niezbędna konfiguracja R
 
-:::{.callout-tip appearance="simple"}
-
-:::
 
 ### Zainstaluj pakiety R za poziomu VS Code. 
 ***
-
 
 ```{r}
 #| eval: false
@@ -128,6 +124,12 @@ W konsolii zainstaluj radian z poziomu terminala anaconda. Nacisnij `windows` i 
 :::{.callout appearance="minimal"}
 conda update anaconda \
 conda install -c conda-forge radian
+:::
+
+:::{.callout-important}
+Nie zalecam instalowania radian - niezbyt dobrze wpspółpracuje przy wykonywaniu kodu z `.r` i `.qmd`. 
+
+Jeśli zainstalowałeś to wystarczy znaleźć go w ustawieniach `CTRL + ,` i usunąć ścieżkę dostępu dla radian.
 :::
 
 ### Skróty klawiaturowe 
