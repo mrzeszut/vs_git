@@ -5,15 +5,16 @@ date: today
 format: 
   html:
     toc: true
-    toc-depth: 3
+    toc-depth: 4
     toc-location: right
     toc-title: Spis Treści
     number-sections: true
-    number-depth: 3
+    number-depth: 4
     embed-resources: true
     html-math-method: katex
     code-tools: true
     code-block-bg: true
+    code-block-border-left: blue
     code-fold: show
     code-summary: "Show and hide code"
     link-external-icon: true
@@ -21,7 +22,6 @@ format:
     smooth-scroll: true
     self-contained: true
     citation: true
-    bibliography: D:\\Qnap\\dydaktyka\\1_dzienne\\Kurs_R_SPD\\Temat_1_konf\\moja_bib.bib
     theme: 
         dark: solar
         light: flatly
@@ -53,7 +53,7 @@ W tym module zapoznasz się z wprowadzeniem do kontroli wersji i usługi [Git](g
 
 System kontroli wersji `(VCS)` to program lub zestaw programów śledzących zmiany w kolekcji plików. Jednym z celów VCS jest łatwe przywołanie wcześniejszych wersji pojedynczych plików lub całego projektu. Innym celem jest umożliwienie kilku członkom zespołu pracy nad projektem, nawet w tych samych plikach, jednocześnie bez wpływu na pracę nawzajem.
 
-Inną nazwą `VCS` jest system zarządzania konfiguracją oprogramowania `(SCM)`. Dwa terminy są często używane zamiennie — w rzeczywistości oficjalna dokumentacja usługi Git znajduje się w <git-scm.com>. Technicznie kontrola wersji jest tylko jedną z praktyk związanych z usługą `SCM`. VCS może służyć do projektów innych niż oprogramowanie, w tym książek i samouczków online.
+Inną nazwą `VCS` jest system zarządzania konfiguracją oprogramowania `(SCM)`. Dwa terminy są często używane zamiennie — w rzeczywistości oficjalna dokumentacja usługi Git znajduje się w [doc git](git-scm.com). Technicznie kontrola wersji jest tylko jedną z praktyk związanych z usługą `SCM`. VCS może służyć do projektów innych niż oprogramowanie, w tym książek i samouczków online.
 
 Za pomocą programu `VCS` można wykonywać następujące czynności:
 
@@ -128,40 +128,50 @@ Najważniejsze funkcje udostępniane przez usługę GitHub to:
 * Forks Widelce - rowerowe
  *Projects - Projekty
 
+```{r}
+#| eval: false
+#| include: false
+2+2
+# ciekawe, jak tego nie dam to mi bash nie uwzględnia hmn 
+```
 
 ## Start z Git
 
 Możesz otworzyć terminal `git bash` in `VS code`. Załów projekt w dowolnym folderze. niech ściezka będzie krótka. Możesz pracować również niezależnie. Ważnym jest byś miał zainstalwoany git na swoim komputerze lub orzynajmiej wersje portable. Możesz też z menu windows wybrać `git bash`.
 
-1) Najpierw sprawdzimy wersję Git:
+Najpierw sprawdzimy wersję Git:
 
-:::{.callout appearance="minimal"}
-git --version \
-git -v          # alternatywnie
-:::
+```{bash}
+#| eval: false
 
-2) Aby skonfigurować Git, musisz zdefiniować kilka zmiennych globalnych: `user.name` i `user.email`. Obie są wymagane, abyś mógł dokonać zatwierdzenia. Ustaw swoją nazwę w `git bash` za pomocą następującego polecenia. Zastąp <USER_NAME>nazwą użytkownika, której chcesz użyć.
+git --version
+git -v
+```
+
+Aby skonfigurować Git, musisz zdefiniować kilka zmiennych globalnych: `user.name` i `user.email`. Obie są wymagane, abyś mógł dokonać zatwierdzenia. Ustaw swoją nazwę w `git bash` za pomocą następującego polecenia. Zastąp <USER_NAME>nazwą użytkownika, której chcesz użyć.
 
 :::{.callout-note appearance="simple"}
 Podaj ten sam e-mail co przy logowaniu do konta github. 
 :::
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 git config --global user.name "USER_NAME"
-:::
+```
 
-3) Teraz użyj tego polecenia, aby utworzyć user.emailzmienną konfiguracyjną, zastępując <USER_EMAIL>ją swoim adresem e-mail:
+Teraz użyj tego polecenia, aby utworzyć user.emailzmienną konfiguracyjną, zastępując <USER_EMAIL>ją swoim adresem e-mail:
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 git config --global user.email "USER_EMAIL"
-:::
+```
+Potwierdź, że dane wyjściowe zawierają dwa wiersze, które są podobne do poniższego przykładu. Twoje imię i nazwisko oraz adres e-mail będą inne niż w przykładzie
 
-4) Potwierdź, że dane wyjściowe zawierają dwa wiersze, które są podobne do poniższego przykładu. Twoje imię i nazwisko oraz adres e-mail będą inne niż w przykładzie
-
-:::{.callout appearance="minimal"}
-git config --global user.name \
+```{bash}
+#| eval: false
+git config --global user.name
 git config --global user.email
-:::
+```
 
 
 ### Skonfiguruj swoje repozytorium Git
@@ -174,45 +184,49 @@ Zacznij od utworzenia pustego folderu dla swojego projektu, a następnie zainicj
 
 1) Utwórz folder o nazwie Koty. Ten folder będzie katalogiem projektu, zwanym także `working tree`. Katalog projektu to miejsce, w którym przechowywane są wszystkie pliki związane z twoim projektem. 
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 mkdir cats
-:::
+```
 
 2) Przejdź do katalogu projektu za pomocą cdpolecenia:
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 cd cats
-:::
+```
 
 Teraz zainicjuj nowe repozytorium i ustaw nazwę domyślnej gałęzi na main:
 Jeśli korzystasz z Git w wersji 2.28.0 lub nowszej, użyj następujących poleceń:
 
-:::{.callout appearance="minimal"}
-git init --initial-branch=main \
+```{bash}
+#| eval: false
+git init --initial-branch=main
 git init -b main
-:::
+```
 
 Teraz użyj `git status` polecenia, aby pokazać stan działającego drzewa. Powinieneś 
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 git status
-:::
+```
 
 Git odpowiada tym wyjściem, które wskazuje, że `master` jest to bieżąca gałąź `(branch)`. Jest to również jedyna gałąź.
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 On branch main
-
 No commits yet
-
 nothing to commit (create/copy files and use "git add" to track)
-:::
+```
 
 Użyj `ls` polecenia, aby wyświetlić zawartość drzewa roboczego:
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 ls -a
-:::
+```
 
 Opcja `-a` pozwala wyświetlić ukryte pliki. 
 
@@ -224,27 +238,29 @@ Opcja `-a` pozwala wyświetlić ukryte pliki.
 
 Git, podobnie jak większość narzędzi wiersza poleceń, ma wbudowaną funkcję pomocy, za pomocą której można wyszukiwać polecenia i słowa kluczowe. Wpisz następujące polecenie, aby uzyskać pomoc dotyczącą tego, co możesz zrobić z Git:
 
-:::{.callout appearance="minimal"}
-git --help \
-git -h        # alternatywnie
-:::
+```{bash}
+#| eval: false
+git --help
+git -h
+```
 
 Przeczytaj różne opcje dostępne w Git i zwróć uwagę, że każde polecenie ma własną stronę pomocy, gdy zaczniesz kopać głębiej. Nie wszystkie te polecenia będą jeszcze miały sens, ale niektóre mogą wyglądać znajomo, jeśli masz doświadczenie w korzystaniu z VCS.
 
-:::{.callout appearance="minimal"}
+```{bash}
+#| eval: false
 git -h config
-:::
+```
 
 :::{.callout-tip appearance="simple"}
-
-**Możesz podejrzeć plik konfiguracji w notatniku:**
-
-notepad .git/config
-
-**Alternatywnie notepad ++**
-
-start notepad++ .git/config
+Patrz niżej:
+Możesz podejrzeć plik konfiguracji w notatniku lun notepad++:
 :::
+
+```{bash}
+#| eval: false
+notepad .git/config
+start notepad++ .git/config
+```
 
 ## Podstawowe polecenia Gita
 
@@ -283,15 +299,15 @@ W tym module poznałeś podstawy korzystania z Git. Nauczyłeś się:
 
 W tym momencie wiesz wystarczająco dużo o Gicie, aby samodzielnie używać kontroli wersji w podstawowym projekcie. Kontrola wersji błyszczy we współpracy z innymi programistami. Sprawdź inne moduły w tej ścieżce szkoleniowej, aby dowiedzieć się więcej o używaniu Git z innymi!
 
-
-**Zasoby dodatkowe**
+## Zasoby dodatkowe
 
 [Pro Git](https://git-scm.com/book/en/v2)
 
 [https://docs.github.com/en/get-started/quickstart/git-and-github-learning-resources](https://docs.github.com/en/get-started/quickstart/git-and-github-learning-resources)
 
-:::{.callout appearance="minimal"}
-git help tutorial \
-git help tutorial-2 \
+```{bash}
+#| eval: false
+git help tutorial
+git help tutorial-2
 git help every
-:::
+```
